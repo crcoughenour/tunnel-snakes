@@ -1,10 +1,10 @@
-<!-- Partner Appointment Page to Accept/Reject -->
+<!-- Partner Appointment Page to Reject -->
 <apex:page sidebar="false" showHeader="false" tabStyle="Contact"
 	controller="PartnerAppointmentsController">
 	<apex:image url="{!$Resource.SH_logo}" />
 	<apex:form>
 		<apex:pageBlock title="Scheduled Appointments" id="appointments">
-			<apex:commandButton value="Cancel Selected" reRender="appointments" />
+			<apex:commandButton value="Cancel Selected" reRender="appointments" action="{!deleteSelectedAppointments()}"/>
 			<apex:pageBlockSection columns="1">
 				<apex:pageBlockSectionItem>
 					<apex:outputPanel>
