@@ -1,23 +1,23 @@
 <!-- Partner Appointment Page to Accept/Reject -->
 <apex:page sidebar="false" showHeader="false" tabStyle="Contact"
-	controller="DummyController">
-	<apex:image url="{!$Resource.SH_logo}"/>
-	<apex:form >
-		<apex:pageBlock title="Pending Appointments" id="appointments">
-		<apex:commandButton value="Delete Selected" action="{!deleteSelectedAppointments}" reRender="appointments"/>
+	controller="PartnerAppointmentsController">
+	<apex:image url="{!$Resource.SH_logo}" />
+	<apex:form>
+		<apex:pageBlock title="Scheduled Appointments" id="appointments">
+			<apex:commandButton value="Cancel Selected" reRender="appointments" />
 			<apex:pageBlockSection columns="1">
-				<apex:pageBlockSectionItem >
-					<apex:outputPanel >
-						<apex:pageBlockTable value="{!dummyAppointments}" var="app">
-							<apex:column value="{!doctorMap[!app.Professional__c]}" />
-							<apex:column value="{!app.Coverage_Member__c" />
-							<apex:column value="{!app.Appointment_Type__c" />
-							<apex:column value="{!app.Start_Time__c}" />
-							<apex:column value="{!app.Appointment_length__c" />
-							<apex:column value="{!app.Reason_For_Visit__c}" />
-							<apex:column value="{!app.Description__c}" />				
-							<apex:column >
-								<!-- <apex:inputCheckbox value="" /> -->
+				<apex:pageBlockSectionItem>
+					<apex:outputPanel>
+						<apex:pageBlockTable value="{!appointmentWrapperList}" var="app">
+							<apex:column value="{!app.appointment.Doctor_Name__c}" />
+							<apex:column value="{!app.appointment.Patient_Name__c" />
+							<apex:column value="{!app.appointment.Appointment_Type__c" />
+							<apex:column value="{!app.appointment.Start_Time__c}" />
+							<apex:column value="{!app.appointment.Appointment_length__c" />
+							<apex:column value="{!app.appointment.Reason_For_Visit__c}" />
+							<apex:column value="{!app.appointment.Description__c}" />
+							<apex:column>
+								<apex:inputCheckbox value="{!app.setToDelete}" />
 							</apex:column>
 						</apex:pageBlockTable>
 					</apex:outputPanel>
