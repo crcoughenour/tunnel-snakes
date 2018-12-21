@@ -1,7 +1,7 @@
 eclipse.preferences.version=1
 endpointApiVersion=38.0
-endpointEnvironment=Production/Developer Edition
-endpointServer=login.salesforce.com
+endpointEnvironment=Other (Specify)
+endpointServer=cody-trail-dev-ed.my.salesforce.com
 httpsProtocol=true
 ideVersion=38.0
 keependpoint=false
@@ -12,4 +12,4 @@ preferToolingDeployment=true
 projectIdentifier=IDE-5636905195473649648
 readTimeout=400
 sessionId=
-username=crcoughenourde@salesforce.com
+username=tunnelsnakeforce@gmail.com
