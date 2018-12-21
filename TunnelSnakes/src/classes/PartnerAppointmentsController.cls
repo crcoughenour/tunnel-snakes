@@ -22,9 +22,13 @@ public with sharing class PartnerAppointmentsController
     	{
     		//Set<Id> tempIdSet;
     		
+    		doctorMap = new Map<Id, String>();
+	    	appBoolList = new List<Boolean>();
+	    	
     		//get all doctors that the current user has access to
     			//necessary incase the user is a nurse who is in charge of multiple doctors scheduling
 	    	doctorList = [SELECT Id, Name FROM Contact];
+	    	
 	    	
 	    	//fill a map with keys = doctor's id, values = doctor's name
 	    	for(Contact con : doctorList)
