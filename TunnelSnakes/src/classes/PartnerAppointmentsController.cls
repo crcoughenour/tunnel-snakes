@@ -12,6 +12,7 @@ public with sharing class PartnerAppointmentsController
     public List<Boolean> appBoolList {get; set;}
     public List<Contact> doctorList {get;}
     public Map<Id, String> doctorMap {get;}
+    public List<AppointmentWrapper> appointmentWrapperList {get;}
     private DateTime currentDateTime;
     
     
@@ -24,6 +25,7 @@ public with sharing class PartnerAppointmentsController
     		
     		doctorMap = new Map<Id, String>();
 	    	appBoolList = new List<Boolean>();
+	    	appointmentWrapperList = new List<AppointmentWrapper>();
 	    	
     		//get all doctors that the current user has access to
     			//necessary incase the user is a nurse who is in charge of multiple doctors scheduling
@@ -47,7 +49,8 @@ public with sharing class PartnerAppointmentsController
 		    //make the list of boolean values the same size as appointmentList and populate it with all falses
     		for(Integer i = 0; i < appointmentList.size(); i++)
     		{
-    			appBoolList.add(false);
+    			//appBoolList.add(false);
+    			appointmentWrapperList.add(new AppointmentWrapper(appointmentList[i], false));
     		}
     	}
     	catch(QueryException e)
@@ -64,20 +67,40 @@ public with sharing class PartnerAppointmentsController
     	List<Appointment__c> deleteList = new List<Appointment__c>();
     	
     	//build the list that will be deleted
-    	for(Integer i = 0; i < appointmentList.size(); i++)
+    	for(Integer i = 0; i < AppointmentWrapperList.size(); i++)
     	{
     		//if the appointment has been selected, then add it to the delete list
-    		if(appBoolList[i])
+    		if(AppointmentWrapperList[i].setToDelete)
     		{
-    			deleteList.add(appointmentList[i]);
+    			deleteList.add(AppointmentWrapperList[i].appointment);
     		}
     	}
     	
     	//if the delete list contains any records, DML that sucker
     	if(deleteList.size() > 0)
     	{
-    		delete deleteList;
+    		try
+    		{
+    			delete deleteList;
+    		}
+    		catch(DMLException e)
+    		{
+    			throw e;
+    		}
     	}
     	return null;
+    }
+    
+    
+    private class AppointmentWrapper
+    {
+    	public Appointment__c appointment {get; set;}
+    	public Boolean setToDelete {get; set;}
+    	
+    	public AppointmentWrapper(Appointment__c appointment, Boolean setToDelete)
+    	{
+    		this.appointment = appointment;
+    		this.setToDelete = setToDelete;
+    	}
     }
 }
