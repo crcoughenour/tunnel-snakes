@@ -36,7 +36,7 @@ public class FindDoctorController {
     }
     
     //set list of doctors based on filter criteria
-    public static void searchDoctors() {
+    public String searchDoctors() {
     	String queryStringSelect = 'SELECT Id, FirstName, LastName, Sex__c, Languages__c, Location__c, Specialties__c';
     	String queryStringFrom = ' FROM Contact';
     	String queryStringWhere = ' WHERE ';
@@ -44,40 +44,53 @@ public class FindDoctorController {
     	
     	//dynamically add Sex of Doctor preference
     	if (selectedSex != 'No Preference') {
-    		queryStringWhere += 'Sex__c = ' + selectedSex;
+    		queryStringWhere += 'Sex__c = \'' + selectedSex +'\'';
     		NumberOfFilters++;
     	}
     	
     	//dynamically add Language of Doctor preference
     	if (numberOfFilters > 0) {
     		queryStringWhere += ' AND';
+			NumberOfFilters++;
     	}
-    	queryStringWhere += ' Languages__c includes ' + selectedLanguage;
+    	queryStringWhere += ' Languages__c includes \'' + selectedLanguage + '\'';
     	
     	//dynamically add Specialty preference
     	if (numberOfFilters > 0) {
 			queryStringWhere += ' AND';
+    		NumberOfFilters++;			
 		}
-		queryStringWhere += ' Specialties__c includes ' + selectedSpecialty;
+		queryStringWhere += ' Specialties__c includes \'' + selectedSpecialty + '\'';
     	
     	//dynamically add Location preference
+    	/*
     	if (numberOfFilters > 0) {
 			queryStringWhere += ' AND';
+    		NumberOfFilters++;			
 		}
     	queryStringWhere += 'DISTANCE(Location__c, GEOLOCATION(' 
-    		+ String.valueOf(customerLat)+','+String.valueOf(customerLong)+'), "mi") < ' + maxDistance;	
+    		+ String.valueOf(customerLat)+','+String.valueOf(customerLong)+'), "mi") < ' + maxDistance;
     		
-    	doctorsToShow = Database.query(queryStringSelect + queryStringFrom + queryStringWhere);
+		NumberOfFilters++;
+		*/
+    		
+    	//doctorsToShow = Database.query(queryStringSelect + queryStringFrom + queryStringWhere);
+    	
+    	return queryStringSelect + queryStringFrom + queryStringWhere;
     }
     
     //Find all available appointments for a given doctor
-    public static void searchAvailableAppointments() {
+    		//Build list of possible appointments
+
+    public void searchAvailableAppointments() {
     	DateTime selectedDateTime = selectedDate;
     	ID DoctorID = selectedDoctor.Id;
+    	Boolean appointmentOverlap = false;
+		DateTime copySelectedDateTime = selectedDateTime;
     	bookedAppointments = [SELECT Id, Appointment_Length__c, Start_Time__c, Professional__c
     						  FROM Appointment__c
     						  WHERE Start_Time__c >= :selectedDateTime
-    						  AND Professional__c = :selectedDoctorID];
+    						  AND Professional__c = :DoctorID];
 	  
 		List<DateTime> appointmentDateTimes = new List<DateTime>();
 		for (Appointment__c thisAppt: bookedAppointments) {
@@ -85,30 +98,32 @@ public class FindDoctorController {
 		}
 		
 		List<String> workHours = new List<String>();
-		workHours.addAll(selectedDoctor.workHours__c.split(';'));
+		workHours.addAll(selectedDoctor.Work_Hours__c.split(';'));
 		
-		//TODO: Check that the doctor works that day
+		List<String> workDays = new List<String>();
+		workDays.addAll(selectedDoctor.Workdays__c.split(';'));
 		
-		//Build list of possible appointments
-		DateTime copySelectedDateTime = selectedDateTime;
-		Boolean appointmentOverlap = false;
-		while(copySelectedDateTime < TOMORROW()) {
-			//if the doctor works at this hour
-			if (workHours.contains(i+':00')) {
-				//and an appointment does not overlap
-				for (DateTime dt: appointmentDateTimes) {
-					if (dt <= copySelectedDateTime && dt.addMinutes(selectedDoctor.Appointment_Length_Minutes__c) >= copySelectedDateTime) {
-						appointmentOverlap = true;
+		if(workDays.contains(selectedDateTime.format('EEEE'))) {
+			while(copySelectedDateTime < selectedDateTime.addDays(1)) {
+				//if the doctor works at this hour
+				if (workHours.contains(copySelectedDateTime.hour()+':00')) {
+					//and an appointment does not overlap
+					for (DateTime dt: appointmentDateTimes) {
+						if (dt <= copySelectedDateTime && dt.addMinutes(selectedDoctor.Appointment_Length_Minutes__c.intValue()) >= copySelectedDateTime) {
+							appointmentOverlap = true;
+						}
+					}
+					if (appointmentOverlap != true) {
+						availableTimes.add(copySelectedDateTime);			
 					}
 				}
-				if (appointmentOverlap != true) {
-					availableTimes.add(copySelectedDateTime);			
-				}
+				copySelectedDateTime.addMinutes(selectedDoctor.Appointment_Length_Minutes__c.intValue());
+				appointmentOverlap = false;
 			}
-			copySelectedDateTime.addMinutes(selectedDoctor.Appointment_Length_Minutes__c);
-			appointmentOverlap = false;
 		}
-    	
+
+
+		
     }
     
 }
