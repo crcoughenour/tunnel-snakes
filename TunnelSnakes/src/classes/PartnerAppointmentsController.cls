@@ -10,22 +10,24 @@ public with sharing class PartnerAppointmentsController
     public List<Appointment__c> appointmentList{get; set;}
     public Map<id, Contact> covMemberMap {get; set;}
     public List<Boolean> appBoolList {get; set;}
-    public List<Contact> doctorList {get;}
-    public Map<Id, String> doctorMap {get;}
-    public List<AppointmentWrapper> appointmentWrapperList {get;}
+    public List<Contact> doctorList {get; set;}
+    public Map<Id, String> doctorMap {get; set;}
+    public List<AppointmentWrapper> appointmentWrapperList {get; set;}
     private DateTime currentDateTime;
     
     
     public PartnerAppointmentsController()
     {
     	currentDateTime = System.now();
+        doctorMap = new Map<Id, String>();
+	    appBoolList = new List<Boolean>();
+	    appointmentWrapperList = new List<AppointmentWrapper>();
+        
     	try
     	{
     		//Set<Id> tempIdSet;
     		
-    		doctorMap = new Map<Id, String>();
-	    	appBoolList = new List<Boolean>();
-	    	appointmentWrapperList = new List<AppointmentWrapper>();
+    		
 	    	
     		//get all doctors that the current user has access to
     			//necessary incase the user is a nurse who is in charge of multiple doctors scheduling
@@ -36,7 +38,7 @@ public with sharing class PartnerAppointmentsController
 	    	for(Contact con : doctorList)
 	    	{
 	    		//tempIdSet.add(con.Id);
-	    		doctorMap.add(con.Id, con.Name);
+	    		doctorMap.put(con.Id, con.Name);
 	    	}
 	    	
 	    	//get all appointments that have not occured yet, and that are for the doctors previously gotten
@@ -92,7 +94,7 @@ public with sharing class PartnerAppointmentsController
     }
     
     
-    private class AppointmentWrapper
+    class AppointmentWrapper
     {
     	public Appointment__c appointment {get; set;}
     	public Boolean setToDelete {get; set;}
