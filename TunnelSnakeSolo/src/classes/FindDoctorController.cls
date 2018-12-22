@@ -1,7 +1,7 @@
 /* Developer: Cody Coughenour
 * Purpose: Handles requests from Visualforce Page for searching
 * for a doctor with whom to schedule an appointment.
-* Last Modified Date: 12/20/2018
+* Last Modified Date: 12/22/2018
 */
 
 public class FindDoctorController {

@@ -1,6 +1,6 @@
 /* Developer: Cody Coughenour
 * Purpose: Tests for the FindDoctorController class
-* Last Modified Date: 12/20/2018
+* Last Modified Date: 12/22/2018
 */
 @isTest
 private class FindDoctorTest {
