@@ -1,7 +1,6 @@
 /* Developer: Cody Coughenour
 * Purpose: Handles requests from Visualforce Page for searching
-* for a doctor with whom to schedule an appointment and allows
-* user to then schedule that appointment.
+* for a doctor with whom to schedule an appointment.
 * Last Modified Date: 12/22/2018
 */
 
@@ -68,14 +67,14 @@ public class FindDoctorController {
     		queryStringWhere += ' AND';
 			NumberOfFilters++;
     	}
-    	queryStringWhere += ' Languages__c includes \'' + selectedLanguage + '\'';
+    	queryStringWhere += ' Languages__c includes (\'' + selectedLanguage + '\')';
     	
     	//dynamically add Specialty preference
     	if (numberOfFilters > 0) {
 			queryStringWhere += ' AND';
     		NumberOfFilters++;			
 		}
-		queryStringWhere += ' Specialties__c includes \'' + selectedSpecialty + '\'';
+		queryStringWhere += ' Specialties__c includes (\'' + selectedSpecialty + '\')';
     	
     	//dynamically add Location preference
     	
@@ -83,12 +82,12 @@ public class FindDoctorController {
 			queryStringWhere += ' AND';
     		NumberOfFilters++;			
 		}
-    	queryStringWhere += 'DISTANCE(Location__c, GEOLOCATION(' 
-    		+ String.valueOf(customerLat)+','+String.valueOf(customerLong)+'), "mi") < ' + maxDistance;
+    	queryStringWhere += ' DISTANCE(Location__c, GEOLOCATION(' 
+    		+ String.valueOf(customerLat)+','+String.valueOf(customerLong)+'), \'mi\') < ' + maxDistance;
     		
 		NumberOfFilters++;
 		
-    		
+    system.debug(queryStringSelect + queryStringFrom + queryStringWhere);
     doctorsToShow = Database.query(queryStringSelect + queryStringFrom + queryStringWhere);
     	
     }
@@ -131,11 +130,13 @@ public class FindDoctorController {
 						availableTimes.add(potentialDateTime);			
 					}
 				}
-				potentialDateTime.addMinutes(selectedDoctor.Appointment_Length_Minutes__c.intValue());
+				potentialDateTime = potentialDateTime.addMinutes(selectedDoctor.Appointment_Length_Minutes__c.intValue());
+				system.debug(potentialDateTime);
 				appointmentOverlap = false;
 			}
 		}
     }
+    
     
     public void selectAppointment() {
     	appointmentToSave.Coverage_Member__c = currentCustomerID;
@@ -149,4 +150,5 @@ public class FindDoctorController {
     	appointmentToSave.Reason_For_Visit__c = appointmentReason;
     	insert appointmentToSave;
     }
+    
 }
