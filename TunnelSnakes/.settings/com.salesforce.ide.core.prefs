@@ -1,7 +1,7 @@
 eclipse.preferences.version=1
 endpointApiVersion=38.0
-endpointEnvironment=Other (Specify)
-endpointServer=cody-trail-dev-ed.my.salesforce.com
+endpointEnvironment=Production/Developer Edition
+endpointServer=login.salesforce.com
 httpsProtocol=true
 ideVersion=38.0
 keependpoint=false

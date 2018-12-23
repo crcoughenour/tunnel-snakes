@@ -44,7 +44,7 @@ public with sharing class PartnerAppointmentsController
 	    	//get all appointments that have not occured yet, and that are for the doctors previously gotten
 	    	appointmentList = [SELECT Id, Appointment_Length__c, Appointment_Type__c, 
 	    					   Coverage_Member__c, Professional__c, Reason_For_Visit__c, 
-	    					   Start_Time__c, Description__c FROM Appointment__c 
+	    					   Start_Time__c, Description__c, Patient_Name__c, Doctor_Name__c FROM Appointment__c 
 	    					   WHERE ((Start_Time__c > :currentDateTime) and Professional__c IN :doctorMap.keySet())
 	    					   ORDER BY Start_Time__c];
 	    					   
@@ -79,11 +79,46 @@ public with sharing class PartnerAppointmentsController
     	}
     	
     	//if the delete list contains any records, DML that sucker
+    		//also email all the patients that their appointment has been canceled
     	if(deleteList.size() > 0)
     	{
     		try
     		{
+    			//delete the records, will this clear out local records? if so need to move below emailing
     			delete deleteList;
+    			
+    			//make a list of the emails to be sent
+    			List<Messaging.SingleEmailMessage> emailList = new List<Messaging.SingleEmailMessage>();
+    			
+    			//get the template that I want to use so I will have a letterhead
+    			//Id emailTempID = [SELECT Id FROM EmailTemplate WHERE name = 'Blank_With_Letterhead' LIMIT 1].Id;
+    			//Id emailTempID = PartnerAppointmentsControllerHelper.getEmailTemplateID('Blank_With_Letterhead');
+    			
+    			
+    			//make an email for all the appointments being deleted and add them to the email list
+    			for(Appointment__c curApp : deleteList)
+    			{
+    				//make a new email
+    				Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+    				
+    				//set the template for the email
+    				//mail.setTemplateId(emailTempID);
+    				
+    				//get the patients email address from the Helper class
+    				mail.setToAddresses(new String[] {PartnerAppointmentsControllerHelper.getPatientEmail(curApp.Coverage_Member__c)});
+    				
+    				mail.setSubject('Appointment Cancelled');
+    				
+    				String bodyText = 'Dear ' + curApp.Patient_Name__c + ',\n\nYour appointment with ' 
+    								  + curApp.Doctor_Name__c + ' has been cancelled\n\nSorry for the inconvienance,\nSouthern Heart';
+    				
+    				mail.setPlainTextBody(bodyText);
+    				//mail.setHtmlBody(bodyText);
+    				emailList.add(mail);
+    			}
+    			
+    			//bulk send all of the emails at once
+    			Messaging.sendEmail(emailList);
     		}
     		catch(DMLException e)
     		{
