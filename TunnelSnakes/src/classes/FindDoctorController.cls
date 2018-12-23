@@ -78,16 +78,19 @@ public class FindDoctorController {
     	
     	//dynamically add Location preference
     	
-    	if (numberOfFilters > 0) {
-			queryStringWhere += ' AND';
-    		NumberOfFilters++;			
+		if (customerLat != null && customerLong != null) {
+	    	if (numberOfFilters > 0) {
+				queryStringWhere += ' AND';
+				NumberOfFilters++;			
+			}
+			queryStringWhere += ' DISTANCE(Location__c, GEOLOCATION(' 
+				+ String.valueOf(customerLat)+','+String.valueOf(customerLong)+'), \'mi\') < ' + maxDistance;
+				
+			NumberOfFilters++;
 		}
-    	queryStringWhere += ' DISTANCE(Location__c, GEOLOCATION(' 
-    		+ String.valueOf(customerLat)+','+String.valueOf(customerLong)+'), \'mi\') < ' + maxDistance;
-    		
-		NumberOfFilters++;
+
 		
-    system.debug(queryStringSelect + queryStringFrom + queryStringWhere);
+    //system.debug(queryStringSelect + queryStringFrom + queryStringWhere);
     doctorsToShow = Database.query(queryStringSelect + queryStringFrom + queryStringWhere);
     	
     }
