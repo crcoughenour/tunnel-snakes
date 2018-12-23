@@ -12,7 +12,7 @@ public with sharing class PartnerAppointmentsController
     public List<Boolean> appBoolList {get; set;}
     public List<Contact> doctorList {get; set;}
     public Map<Id, String> doctorMap {get; set;}
-    public List<AppointmentWrapper> appointmentWrapperList {get; set;}
+    public List<AppointmentWrapper> appointmentWrapperList {get; private set;}
     private DateTime currentDateTime;
     
     
