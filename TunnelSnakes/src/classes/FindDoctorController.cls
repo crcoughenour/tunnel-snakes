@@ -1,7 +1,7 @@
 /* Developer: Cody Coughenour
 * Purpose: Handles requests from Visualforce Page for searching
 * for a doctor with whom to schedule an appointment.
-* Last Modified Date: 12/22/2018
+* Last Modified Date: 12/23/2018
 */
 
 public class FindDoctorController {
@@ -9,7 +9,7 @@ public class FindDoctorController {
     //sObjects and sObject Collections
     public Contact selectedDoctor {get;set;}
     public List<Contact> doctorsToShow {get;set;}
-    public List<DateTime> availableTimes {get;set;}
+    public List<TimeWrapper> availableTimes {get;set;}
     public List<Appointment__c> bookedAppointments {get;set;}
     public Appointment__c appointmentToSave {get;set;}
 
@@ -37,16 +37,13 @@ public class FindDoctorController {
     public Boolean showNext {get;set;}
     public Boolean showPrev {get;set;}
     
-    //utility
-    public List<Integer> index; 
     
     {
     	selectedDoctor = new Contact();
     	doctorsToShow = new List<Contact>();
-    	availableTimes = new List<DateTime>();
+    	availableTimes = new List<TimeWrapper>();
     	bookedAppointments = new List<Appointment__c>(); 
     	appointmentToSave = new Appointment__c();
-        index = new Integer[] {};
     	
     	//get related customer object from context user 
     	ID userID = userInfo.getUserId();
@@ -132,9 +129,7 @@ public class FindDoctorController {
 						}
 					}
 					if (appointmentOverlap != true) {
-						availableTimes.add(potentialDateTime);
-                        index.add(i);
-                        i++;
+						availableTimes.add(new TimeWrapper(potentialDateTime));
 					}
 				}
 				potentialDateTime = potentialDateTime.addMinutes(selectedDoctor.Appointment_Length_Minutes__c.intValue());
@@ -157,5 +152,13 @@ public class FindDoctorController {
     	appointmentToSave.Appointment_Type__c = appointmentType;
     	appointmentToSave.Reason_For_Visit__c = appointmentReason;
     	insert appointmentToSave;
+    }
+    
+    public class TimeWrapper {
+    	public DateTime dt {get;set;}
+    	
+    	public TimeWrapper(DateTime dt) {
+    		this.dt = dt;
+    	}
     }
 }
