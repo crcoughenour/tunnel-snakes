@@ -28,12 +28,14 @@ public class FindDoctorController {
     
     //appointment save variables
     public String appointmentType {get;set;}
-    public String appointmentReason {get;set;}
     public ID currentCustomerID {get;set;}
     public String selectedStartTime {get;set;}
     
     //display booleans
+    public Boolean displayCriteria {get;set;}
+    public Boolean displayDoctorTable {get;set;}
     public Boolean displayAppointmentTable {get;set;}
+    public Boolean displayAppointmentInfo {get;set;}
     public Boolean showNext {get;set;}
     public Boolean showPrev {get;set;}
     
@@ -45,6 +47,12 @@ public class FindDoctorController {
     	bookedAppointments = new List<Appointment__c>(); 
     	appointmentToSave = new Appointment__c();
     	
+    	//default display values
+    	displayCritera = true;
+    	displayAppointmentTable = false;
+    	displayDoctorTable = false;
+    	displayAppointmentInfo = false;
+    	
     	//get related customer object from context user 
     	ID userID = userInfo.getUserId();
     	currentCustomerID = [SELECT Id, ContactID FROM User Where Id = :userID].contactID;
@@ -52,6 +60,7 @@ public class FindDoctorController {
     
     //set list of doctors based on filter criteria
     public void searchDoctors() {
+    	displayDoctorTable = true;
     	String queryStringSelect = 'SELECT Id, FirstName, LastName, Sex__c, Languages__c, Location__c, Specialties__c';
     	String queryStringFrom = ' FROM Contact';
     	String queryStringWhere = ' WHERE ';
@@ -95,6 +104,10 @@ public class FindDoctorController {
     
     //Find all available appointments for a given doctor
     public void searchAvailableAppointments() {
+    	displayCriteria = false;
+    	displayDoctorTable = false;
+    	displayAppointmentTable = true;
+    	
     	DateTime selectedDateTime = selectedDate;
     	selectedDoctor = [SELECT Id, Work_Hours__c, Workdays__c, Appointment_Length_Minutes__c
     					  FROM Contact WHERE Id =:selectedDoctorID];
@@ -139,19 +152,32 @@ public class FindDoctorController {
 			}
             system.debug(availableTimes);
 		}
+		
     }
     
+    public void restartSearch() {
+    	displayCritera = true;
+    	displayAppointmentTable = false;
+    	displayDoctorTable = false;
+    	displayAppointmentInfo = false;
+    }
     
     public void selectAppointment() {
+    	displayAppointmentTable = false;
+    	displayAppointmentInfo = true;
     	appointmentToSave.Coverage_Member__c = currentCustomerID;
     	appointmentToSave.Professional__c = selectedDoctorID;
     	appointmentToSave.Start_Time__c = DateTime.parse(selectedStartTime);
-    	//show another element to enter more information
+    	appointmentToSave.Reason_For_Visit__c = selectedSpecialty;
+    }
+    
+    public void closeAppointment() {
+    	displayAppointmentTable = true;
+    	displayAppointmentInfo = false;
     }
     
     public void saveAppointment() {
     	appointmentToSave.Appointment_Type__c = appointmentType;
-    	appointmentToSave.Reason_For_Visit__c = appointmentReason;
     	insert appointmentToSave;
     }
     
