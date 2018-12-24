@@ -1,19 +1,22 @@
-<!-- Partner Appointment Page to Reject -->
+<!-- Partner Appointment Page to Accept/Reject -->
 <apex:page sidebar="false" showHeader="false" tabStyle="Contact"
 	controller="PartnerAppointmentsController">
 	<apex:image url="{!$Resource.SH_logo}" />
 	<apex:form>
-		<apex:pageBlock title="Scheduled Appointments" id="appointments">
-			<apex:commandButton value="Cancel Selected" reRender="appointments" action="{!deleteSelectedAppointments()}"/>
+		<apex:pageBlock title="Pending Appointments" id="appointments">
+			<div align="center" draggable="false">
+				<apex:commandButton value="Delete Selected"
+					action="{!deleteSelectedAppointments}" reRender="appointments" />
+			</div>
 			<apex:pageBlockSection columns="1">
 				<apex:pageBlockSectionItem>
 					<apex:outputPanel>
 						<apex:pageBlockTable value="{!appointmentWrapperList}" var="app">
 							<apex:column value="{!app.appointment.Doctor_Name__c}" />
-							<apex:column value="{!app.appointment.Patient_Name__c" />
-							<apex:column value="{!app.appointment.Appointment_Type__c" />
+							<apex:column value="{!app.appointment.Patient_Name__c}" />
+							<apex:column value="{!app.appointment.Appointment_Type__c}" />
 							<apex:column value="{!app.appointment.Start_Time__c}" />
-							<apex:column value="{!app.appointment.Appointment_length__c" />
+							<apex:column value="{!app.appointment.Appointment_length__c}" />
 							<apex:column value="{!app.appointment.Reason_For_Visit__c}" />
 							<apex:column value="{!app.appointment.Description__c}" />
 							<apex:column>
