@@ -120,7 +120,7 @@ public with sharing class PartnerAppointmentsController
     			}
     			
     			//bulk send all of the emails at once
-    			//Messaging.sendEmail(emailList);
+    			Messaging.sendEmail(emailList);
     		}
     		catch(DMLException e)
     		{
