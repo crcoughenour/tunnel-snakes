@@ -48,7 +48,7 @@ public class FindDoctorController {
     	appointmentToSave = new Appointment__c();
     	
     	//default display values
-    	displayCritera = true;
+    	displayCriteria = true;
     	displayAppointmentTable = false;
     	displayDoctorTable = false;
     	displayAppointmentInfo = false;
@@ -156,7 +156,7 @@ public class FindDoctorController {
     }
     
     public void restartSearch() {
-    	displayCritera = true;
+    	displayCriteria = true;
     	displayAppointmentTable = false;
     	displayDoctorTable = false;
     	displayAppointmentInfo = false;
