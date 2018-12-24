@@ -37,12 +37,16 @@ public class FindDoctorController {
     public Boolean showNext {get;set;}
     public Boolean showPrev {get;set;}
     
+    //utility
+    public List<Integer> index; 
+    
     {
     	selectedDoctor = new Contact();
     	doctorsToShow = new List<Contact>();
     	availableTimes = new List<DateTime>();
     	bookedAppointments = new List<Appointment__c>(); 
-    	appointmentToSave = new Appointment__c();  
+    	appointmentToSave = new Appointment__c();
+        index = new Integer[] {};
     	
     	//get related customer object from context user 
     	ID userID = userInfo.getUserId();
@@ -78,19 +82,16 @@ public class FindDoctorController {
     	
     	//dynamically add Location preference
     	
-		if (customerLat != null && customerLong != null) {
-	    	if (numberOfFilters > 0) {
-				queryStringWhere += ' AND';
-				NumberOfFilters++;			
-			}
-			queryStringWhere += ' DISTANCE(Location__c, GEOLOCATION(' 
-				+ String.valueOf(customerLat)+','+String.valueOf(customerLong)+'), \'mi\') < ' + maxDistance;
-				
-			NumberOfFilters++;
+    	if (numberOfFilters > 0) {
+			queryStringWhere += ' AND';
+    		NumberOfFilters++;			
 		}
-
+    	queryStringWhere += ' DISTANCE(Location__c, GEOLOCATION(' 
+    		+ String.valueOf(customerLat)+','+String.valueOf(customerLong)+'), \'mi\') < ' + maxDistance;
+    		
+		NumberOfFilters++;
 		
-    //system.debug(queryStringSelect + queryStringFrom + queryStringWhere);
+    system.debug(queryStringSelect + queryStringFrom + queryStringWhere);
     doctorsToShow = Database.query(queryStringSelect + queryStringFrom + queryStringWhere);
     	
     }
@@ -119,24 +120,28 @@ public class FindDoctorController {
 		//Build list of possible appointment times
     	Boolean appointmentOverlap = false;
 		DateTime potentialDateTime = selectedDateTime;
+        Integer i = 0;
 		if(workDays.contains(selectedDateTime.format('EEEE'))) {
 			while(potentialDateTime < selectedDateTime.addDays(1)) {
 				//if the doctor works at this hour
 				if (workHours.contains(potentialDateTime.hour()+':00')) {
 					//and an appointment does not overlap
 					for (DateTime dt: bookedAppointmentDateTimes) {
-						if (dt <= potentialDateTime && dt.addMinutes(selectedDoctor.Appointment_Length_Minutes__c.intValue()) >= potentialDateTime) {
+                        if (dt == potentialDateTime)  {
 							appointmentOverlap = true;
 						}
 					}
 					if (appointmentOverlap != true) {
-						availableTimes.add(potentialDateTime);			
+						availableTimes.add(potentialDateTime);
+                        index.add(i);
+                        i++;
 					}
 				}
 				potentialDateTime = potentialDateTime.addMinutes(selectedDoctor.Appointment_Length_Minutes__c.intValue());
-				system.debug(potentialDateTime);
+				//system.debug(potentialDateTime);
 				appointmentOverlap = false;
 			}
+            system.debug(availableTimes);
 		}
     }
     
@@ -153,5 +158,4 @@ public class FindDoctorController {
     	appointmentToSave.Reason_For_Visit__c = appointmentReason;
     	insert appointmentToSave;
     }
-    
 }
