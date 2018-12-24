@@ -7,11 +7,11 @@
 
 public with sharing class PartnerAppointmentsController 
 {
-    public List<Appointment__c> appointmentList{get; set;}
-    public Map<id, Contact> covMemberMap {get; set;}
-    public List<Boolean> appBoolList {get; set;}
-    public List<Contact> doctorList {get; set;}
-    public Map<Id, String> doctorMap {get; set;}
+    private List<Appointment__c> appointmentList;
+    //public Map<id, Contact> covMemberMap {get; set;}
+    //public List<Boolean> appBoolList {get; set;}
+    private List<Contact> doctorList;
+    private Map<Id, String> doctorMap;
     public List<AppointmentWrapper> appointmentWrapperList {get; private set;}
     private DateTime currentDateTime;
     
@@ -20,7 +20,7 @@ public with sharing class PartnerAppointmentsController
     {
     	currentDateTime = System.now();
         doctorMap = new Map<Id, String>();
-	    appBoolList = new List<Boolean>();
+	    //appBoolList = new List<Boolean>();
 	    appointmentWrapperList = new List<AppointmentWrapper>();
         
     	try
@@ -75,6 +75,8 @@ public with sharing class PartnerAppointmentsController
     		if(AppointmentWrapperList[i].setToDelete)
     		{
     			deleteList.add(AppointmentWrapperList[i].appointment);
+    			AppointmentWrapperList.remove(i);
+    			i--;
     		}
     	}
     	
@@ -110,7 +112,7 @@ public with sharing class PartnerAppointmentsController
     				mail.setSubject('Appointment Cancelled');
     				
     				String bodyText = 'Dear ' + curApp.Patient_Name__c + ',\n\nYour appointment with ' 
-    								  + curApp.Doctor_Name__c + ' has been cancelled\n\nSorry for the inconvienance,\nSouthern Heart';
+    								  + curApp.Doctor_Name__c + ' has been cancelled.\n\nSorry for the inconvienance,\nSouthern Heart';
     				
     				mail.setPlainTextBody(bodyText);
     				//mail.setHtmlBody(bodyText);
@@ -118,7 +120,7 @@ public with sharing class PartnerAppointmentsController
     			}
     			
     			//bulk send all of the emails at once
-    			Messaging.sendEmail(emailList);
+    			//Messaging.sendEmail(emailList);
     		}
     		catch(DMLException e)
     		{
