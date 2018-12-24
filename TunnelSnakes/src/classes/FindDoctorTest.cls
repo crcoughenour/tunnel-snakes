@@ -30,7 +30,7 @@ public class FindDoctorController {
     public String appointmentType {get;set;}
     public String appointmentReason {get;set;}
     public ID currentCustomerID {get;set;}
-    public DateTime selectedStartTime {get;set;}
+    public String selectedStartTime {get;set;}
     
     //display booleans
     public Boolean displayAppointmentTable {get;set;}
@@ -96,7 +96,8 @@ public class FindDoctorController {
     //Find all available appointments for a given doctor
     public void searchAvailableAppointments() {
     	DateTime selectedDateTime = selectedDate;
-    	selectedDoctor = [SELECT Id, Work_Hours__c, Workdays__c FROM Contact WHERE Id =:selectedDoctorID];
+    	selectedDoctor = [SELECT Id, Work_Hours__c, Workdays__c, Appointment_Length_Minutes__c
+    					  FROM Contact WHERE Id =:selectedDoctorID];
 
     	bookedAppointments = [SELECT Id, Appointment_Length__c, Start_Time__c, Professional__c
     						  FROM Appointment__c
@@ -144,7 +145,7 @@ public class FindDoctorController {
     public void selectAppointment() {
     	appointmentToSave.Coverage_Member__c = currentCustomerID;
     	appointmentToSave.Professional__c = selectedDoctorID;
-    	appointmentToSave.Start_Time__c = selectedStartTime;
+    	appointmentToSave.Start_Time__c = DateTime.parse(selectedStartTime);
     	//show another element to enter more information
     }
     
