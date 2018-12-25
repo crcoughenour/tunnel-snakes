@@ -1,24 +1,28 @@
 /* Developer: Cody Coughenour
 * Purpose: Handles requests from Visualforce Page for searching
 * for a doctor with whom to schedule an appointment.
-* Last Modified Date: 12/23/2018
+* Last Modified Date: 12/24/2018 
 */
 
 public class FindDoctorController {
     
     //sObjects and sObject Collections
+    public Contact currentCustomer {get;set;}
     public Contact selectedDoctor {get;set;}
     public List<Contact> doctorsToShow {get;set;}
     public List<TimeWrapper> availableTimes {get;set;}
     public List<Appointment__c> bookedAppointments {get;set;}
     public Appointment__c appointmentToSave {get;set;}
 
+    //global picklists
+    public List<Schema.PicklistEntry> hoursPickValues {get;set;}
+    public List<Schema.PicklistEntry> daysPickValues {get;set;}
+    public List<Schema.PicklistEntry> specPickValues {get;set;}
+    public List<Schema.PicklistEntry> langPickValues {get;set;}
     
     //doctor search variables
     public String selectedSex {get;set;}
     public String selectedLanguage {get;set;}
-    public String customerLat {get;set;}
-    public String customerLong {get;set;}
     public String maxDistance {get;set;}
     public String selectedSpecialty {get;set;}
     
@@ -47,6 +51,20 @@ public class FindDoctorController {
     	bookedAppointments = new List<Appointment__c>(); 
     	appointmentToSave = new Appointment__c();
     	
+    	//get picklist values
+    	Schema.DescribeFieldResult fieldResult = Contact.Languages__c.getDescribe();
+    	langPickValues = fieldResult.getPicklistValues();
+    	
+    	fieldResult = Contact.Specialties__c.getDescribe();
+		specPickValues = fieldResult.getPicklistValues();
+		
+		fieldResult = Contact.Work_Hours__c.getDescribe();
+		hoursPickValues = fieldResult.getPicklistValues();
+		
+		fieldResult = Contact.Workdays__c.getDescribe();
+		daysPickValues = fieldResult.getPicklistValues();
+    	
+    	
     	//default display values
     	displayCriteria = true;
     	displayAppointmentTable = false;
@@ -56,6 +74,7 @@ public class FindDoctorController {
     	//get related customer object from context user 
     	ID userID = userInfo.getUserId();
     	currentCustomerID = [SELECT Id, ContactID FROM User Where Id = :userID].contactID;
+    	currentCustomer = [SELECT Id, Name, MailingLatitude, MailingLongitude FROM Contact WHERE Id = :currentCustomerID];
     }
     
     //set list of doctors based on filter criteria
@@ -87,14 +106,12 @@ public class FindDoctorController {
 		queryStringWhere += ' Specialties__c includes (\'' + selectedSpecialty + '\')';
     	
     	//dynamically add Location preference
-    	
     	if (numberOfFilters > 0) {
 			queryStringWhere += ' AND';
     		NumberOfFilters++;			
 		}
-    	queryStringWhere += ' DISTANCE(Location__c, GEOLOCATION(' 
-    		+ String.valueOf(customerLat)+','+String.valueOf(customerLong)+'), \'mi\') < ' + maxDistance;
-    		
+    	queryStringWhere += ' DISTANCE(GEOLOCATION(\'mailingLatitude\',\'mailingLongitude\'), GEOLOCATION(' 
+    		+ String.valueOf(currentCustomer.MailingLatitude)+','+String.valueOf(currentCustomer.MailingLongitude)+'), \'mi\') < ' + maxDistance;
 		NumberOfFilters++;
 		
     system.debug(queryStringSelect + queryStringFrom + queryStringWhere);
@@ -109,7 +126,7 @@ public class FindDoctorController {
     	displayAppointmentTable = true;
     	
     	DateTime selectedDateTime = selectedDate;
-    	selectedDoctor = [SELECT Id, Work_Hours__c, Workdays__c, Appointment_Length_Minutes__c
+    	selectedDoctor = [SELECT Id, Name, Work_Hours__c, Workdays__c, Appointment_Length_Minutes__c
     					  FROM Contact WHERE Id =:selectedDoctorID];
 
     	bookedAppointments = [SELECT Id, Appointment_Length__c, Start_Time__c, Professional__c
