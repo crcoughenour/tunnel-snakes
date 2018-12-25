@@ -41,12 +41,7 @@ public without sharing class ContactTriggerHelper
 				if(oldConMap.get(curID).Affliction__c != newConMap.get(curID).Affliction__c)
 				{
 					//get a set of the old afflictions to test against to know which of the afflictions are new
-					List<String> oldAffList = oldConMap.get(curID).Affliction__c.split(';');
-					Set<String> oldAffSet = new Set<String>();
-					for(String curAff : oldAffList)
-					{
-						oldAffSet.add(curAff);
-					}
+					Set<String> oldAffSet = new Set<String>(oldConMap.get(curID).Affliction__c.split(';'));
 					
 					//get the list of the new afflictions
 					List<String> newAffList = newConMap.get(curID).Affliction__c.split(';');
