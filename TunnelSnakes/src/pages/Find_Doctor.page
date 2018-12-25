@@ -1,6 +1,6 @@
 <!-- Developer: Dyllon Carlson
 	Purpose: Page for a customer to create an appointment w/ a network doctor
-	Last Modified: 12/25/2018
+	Last Modified: 12/25/2018   
 	-->
 
 <apex:page controller="FindDoctorController" sidebar="False" title="Find Doctor" showHeader="False" docType="HTML - 5.0">
