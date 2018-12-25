@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
         <members>*</members>
@@ -10,10 +10,6 @@
     </types>
     <types>
         <members>*</members>
-        <name>StaticResource</name>
-    </types>
-    <types>
-        <members>*</members>
         <name>Community</name>
     </types>
     <types>
@@ -22,7 +18,52 @@
     </types>
     <types>
         <members>*</members>
+        <members>Account</members>
+        <members>Asset</members>
+        <members>Contact</members>
+        <members>Product2</members>
+        <name>CustomObject</name>
+    </types>
+    <types>
+        <members>*</members>
         <name>CustomPermission</name>
+    </types>
+    <types>
+        <members>*</members>
+        <name>DataCategoryGroup</name>
+    </types>
+    <types>
+        <members>Communities_Shared_Document_Folder</members>
+        <members>Communities_Shared_Document_Folder/SH_logo_small_png.png</members>
+        <members>Communities_Shared_Document_Folder/SH_logo_small_png1.png</members>
+        <name>Document</name>
+    </types>
+    <types>
+        <members>Appointment_Notification_Templates</members>
+        <members>Appointment_Notification_Templates/Appointment_Created_Professional</members>
+        <members>Auto_Response_Templates</members>
+        <members>Auto_Response_Templates/case_submission_template</members>
+        <members>Auto_Response_Templates/web_to_lead_template</members>
+        <members>unfiled$public</members>
+        <members>unfiled$public/CommunityChangePasswordEmailTemplate</members>
+        <members>unfiled$public/CommunityForgotPasswordEmailTemplate</members>
+        <members>unfiled$public/CommunityLockoutEmailTemplate</members>
+        <members>unfiled$public/CommunityVerificationEmailTemplate</members>
+        <members>unfiled$public/CommunityWelcomeEmailTemplate</members>
+        <members>unfiled$public/MarketingProductInquiryResponse</members>
+        <members>unfiled$public/SUPPORTSelfServiceNewCommentNotificationSAMPLE</members>
+        <members>unfiled$public/SUPPORTSelfServiceNewUserLoginInformationSAMPLE</members>
+        <members>unfiled$public/SUPPORTSelfServiceResetPasswordSAMPLE</members>
+        <members>unfiled$public/SalesNewCustomerEmail</members>
+        <members>unfiled$public/SupportCaseAssignmentNotification</members>
+        <members>unfiled$public/SupportCaseCreatedPhoneInquiries</members>
+        <members>unfiled$public/SupportCaseCreatedWebInquiries</members>
+        <members>unfiled$public/SupportCaseResponse</members>
+        <members>unfiled$public/SupportEscalatedCaseNotification</members>
+        <members>unfiled$public/SupportEscalatedCaseReassignment</members>
+        <members>unfiled$public/SupportSelfServiceNewLoginandPassword</members>
+        <members>unfiled$public/SupportSelfServiceResetPassword</members>
+        <name>EmailTemplate</name>
     </types>
     <types>
         <members>*</members>
@@ -42,48 +83,7 @@
     </types>
     <types>
         <members>*</members>
-        <name>DataCategoryGroup</name>
-    </types>
-    <types>
-        <members>Appointment_Notification_Templates</members>
-        <members>Appointment_Notification_Templates/Appointment_Created_Professional</members>
-        <members>Auto_Response_Templates</members>
-        <members>Auto_Response_Templates/case_submission_template</members>
-        <members>Auto_Response_Templates/web_to_lead_template</members>
-        <members>unfiled$public</members>
-        <members>unfiled$public/CommunityChangePasswordEmailTemplate</members>
-        <members>unfiled$public/CommunityForgotPasswordEmailTemplate</members>
-        <members>unfiled$public/CommunityLockoutEmailTemplate</members>
-        <members>unfiled$public/CommunityVerificationEmailTemplate</members>
-        <members>unfiled$public/CommunityWelcomeEmailTemplate</members>
-        <members>unfiled$public/MarketingProductInquiryResponse</members>
-        <members>unfiled$public/SalesNewCustomerEmail</members>
-        <members>unfiled$public/SupportCaseAssignmentNotification</members>
-        <members>unfiled$public/SupportCaseCreatedPhoneInquiries</members>
-        <members>unfiled$public/SupportCaseCreatedWebInquiries</members>
-        <members>unfiled$public/SupportCaseResponse</members>
-        <members>unfiled$public/SupportEscalatedCaseNotification</members>
-        <members>unfiled$public/SupportEscalatedCaseReassignment</members>
-        <members>unfiled$public/SUPPORTSelfServiceNewCommentNotificationSAMPLE</members>
-        <members>unfiled$public/SupportSelfServiceNewLoginandPassword</members>
-        <members>unfiled$public/SUPPORTSelfServiceNewUserLoginInformationSAMPLE</members>
-        <members>unfiled$public/SupportSelfServiceResetPassword</members>
-        <members>unfiled$public/SUPPORTSelfServiceResetPasswordSAMPLE</members>
-        <name>EmailTemplate</name>
-    </types>
-    <types>
-        <members>Communities_Shared_Document_Folder</members>
-        <members>Communities_Shared_Document_Folder/SH_logo_small_png.png</members>
-        <members>Communities_Shared_Document_Folder/SH_logo_small_png1.png</members>
-        <name>Document</name>
-    </types>
-    <types>
-        <members>Account</members>
-        <members>Asset</members>
-        <members>Product2</members>
-        <members>Contact</members>
-        <members>*</members>
-        <name>CustomObject</name>
+        <name>StaticResource</name>
     </types>
     <version>38.0</version>
 </Package>
