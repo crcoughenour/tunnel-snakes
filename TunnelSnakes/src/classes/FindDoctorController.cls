@@ -72,29 +72,6 @@ public class FindDoctorController {
 				specOptions.add(new SelectOption(pEntry.getValue(), pEntry.getLabel()));
 			}
 		}
-		
-		fieldResult = Contact.Work_Hours__c.getDescribe();
-		entries.clear();
-		entries = fieldResult.getPicklistValues();
-		hoursOptions = new List<SelectOption>();
-		
-    	for(Schema.PicklistEntry pEntry: entries) {
-			if (pEntry.isActive()) {
-				hoursOptions.add(new SelectOption(pEntry.getValue(), pEntry.getLabel()));
-			}
-		}
-		
-		fieldResult = Contact.Workdays__c.getDescribe();
-		entries.clear();
-		entries = fieldResult.getPicklistValues();
-		daysOptions = new List<SelectOption>();
-		
-    	for(Schema.PicklistEntry pEntry: entries) {
-			if (pEntry.isActive()) {
-				daysOptions.add(new SelectOption(pEntry.getValue(), pEntry.getLabel()));
-			}
-		}
-    	
     	
     	//default display values
     	displayCriteria = true;
