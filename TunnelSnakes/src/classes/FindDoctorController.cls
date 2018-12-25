@@ -15,10 +15,10 @@ public class FindDoctorController {
     public Appointment__c appointmentToSave {get;set;}
 
     //global picklists
-    public List<Schema.PicklistEntry> hoursPickValues {get;set;}
-    public List<Schema.PicklistEntry> daysPickValues {get;set;}
-    public List<Schema.PicklistEntry> specPickValues {get;set;}
-    public List<Schema.PicklistEntry> langPickValues {get;set;}
+    public List<SelectOption> hoursOptions {get;set;}
+    public List<SelectOption> daysOptions {get;set;}
+    public List<SelectOption> specOptions {get;set;}
+    public List<SelectOption> langOptions {get;set;}
     
     //doctor search variables
     public String selectedSex {get;set;}
@@ -53,16 +53,47 @@ public class FindDoctorController {
     	
     	//get picklist values
     	Schema.DescribeFieldResult fieldResult = Contact.Languages__c.getDescribe();
-    	langPickValues = fieldResult.getPicklistValues();
+    	List<Schema.PicklistEntry> entries = fieldResult.getPicklistValues();
+    	langOptions = new List<SelectOption>();
+    	
+    	for(Schema.PicklistEntry pEntry: entries) {
+    		if (pEntry.isActive()) {
+    			langOptions.add(new SelectOption(pEntry.getValue(), pEntry.getLabel()));
+    		}
+    	}
     	
     	fieldResult = Contact.Specialties__c.getDescribe();
-		specPickValues = fieldResult.getPicklistValues();
+		entries.clear();
+		entries = fieldResult.getPicklistValues();
+		specOptions = new List<SelectOption>();
+		
+    	for(Schema.PicklistEntry pEntry: entries) {
+			if (pEntry.isActive()) {
+				specOptions.add(new SelectOption(pEntry.getValue(), pEntry.getLabel()));
+			}
+		}
 		
 		fieldResult = Contact.Work_Hours__c.getDescribe();
-		hoursPickValues = fieldResult.getPicklistValues();
+		entries.clear();
+		entries = fieldResult.getPicklistValues();
+		hoursOptions = new List<SelectOption>();
+		
+    	for(Schema.PicklistEntry pEntry: entries) {
+			if (pEntry.isActive()) {
+				hoursOptions.add(new SelectOption(pEntry.getValue(), pEntry.getLabel()));
+			}
+		}
 		
 		fieldResult = Contact.Workdays__c.getDescribe();
-		daysPickValues = fieldResult.getPicklistValues();
+		entries.clear();
+		entries = fieldResult.getPicklistValues();
+		daysOptions = new List<SelectOption>();
+		
+    	for(Schema.PicklistEntry pEntry: entries) {
+			if (pEntry.isActive()) {
+				daysOptions.add(new SelectOption(pEntry.getValue(), pEntry.getLabel()));
+			}
+		}
     	
     	
     	//default display values
