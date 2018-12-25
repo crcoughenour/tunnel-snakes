@@ -15,8 +15,6 @@ public class FindDoctorController {
     public Appointment__c appointmentToSave {get;set;}
 
     //global picklists
-    public List<SelectOption> hoursOptions {get;set;}
-    public List<SelectOption> daysOptions {get;set;}
     public List<SelectOption> specOptions {get;set;}
     public List<SelectOption> langOptions {get;set;}
     
@@ -82,7 +80,9 @@ public class FindDoctorController {
     	//get related customer object from context user 
     	ID userID = userInfo.getUserId();
     	currentCustomerID = [SELECT Id, ContactID FROM User Where Id = :userID].contactID;
-    	currentCustomer = [SELECT Id, Name, MailingLatitude, MailingLongitude FROM Contact WHERE Id = :currentCustomerID];
+    	if (currentCustomerID != null) {
+	    	currentCustomer = [SELECT Id, Name, MailingLatitude, MailingLongitude FROM Contact WHERE Id = :currentCustomerID];
+    	}
     }
     
     //set list of doctors based on filter criteria
