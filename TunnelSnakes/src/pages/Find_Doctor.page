@@ -9,11 +9,12 @@
         <apex:pageBlock rendered="{!displayCriteria}">
         	<apex:pageBlockTable value = "{!dependents}" var = "dep">
         		<apex:column value = "{!dep.name}"/>
-        		<apex:column headervalue = "Select this coverage member?"/>
+        		<apex:column headervalue = "Select this coverage member?">
         			<apex:commandLink value = "Select" action = "{!selectDependent}">
         				<apex:param name = "selectedMember" value = "{!dep.id}" assignTo = "{!selectedDependentID}"/>
         			</apex:commandLink>
-        		</apex:pageBlockTable>
+        		</apex:column>
+        	</apex:pageBlockTable>
         	<!--Choose Sex picklist-->
             <apex:pageBlockSection id="getMaxDistance" title="What is the furthest you are willing to travel (in miles)?">
                 <apex:inputText value="{!maxDistance}"/>
