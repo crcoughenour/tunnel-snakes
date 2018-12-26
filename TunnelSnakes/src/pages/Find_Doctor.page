@@ -91,9 +91,9 @@
                 <apex:outputLabel value="Doctor Name ">
                     <apex:outputText value="{!selectedDoctor.name}"/>
                 </apex:outputLabel>
-                <apex:outputText value="{0, date, MM/dd/yyyy ' at ' HH:mm a}">
-                    <apex:param value="{!appointmentToSave.Start_Time__c}"/>
-                </apex:outputText>
+                <apex:outputLabel value="Appointment Date and Time: ">
+                    <apex:outputText value="{!selectedStartTime}"/>              
+                </apex:outputLabel>
             </apex:pageBlockSection>
             <!--Buttons that allow a user either save the appointment or go back to appointment time table-->   
             <apex:pageBlockButtons location="bottom" >
@@ -107,8 +107,9 @@
                 <apex:commandButton value="Restart Search" action="{!restartSearch}"/>
             </apex:pageBlockButtons>
         </apex:pageBlock>
-        <apex:pageBlock rendered = {!displayConfirmation}>
-        	<apex:outputText value = "Your appointment with {!selectedDoctor.name} on {0, date, MM/dd/yyyy ' at' HH:mm a} has been requested">
-        </apex::pageBlock>
+        <apex:pageBlock rendered="{!displayConfirmation}">
+            <apex:outputText value="Your appointment with {!selectedDoctor.name} on {!selectedStartTime} has been requested">
+            </apex:outputText>
+        </apex:pageBlock>
     </apex:form>
 </apex:page>
