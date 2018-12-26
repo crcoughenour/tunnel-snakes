@@ -1,7 +1,7 @@
 /* Developer: Cody Coughenour
 * Purpose: Handles requests from Visualforce Page for searching
 * for a doctor with whom to schedule an appointment.
-* Last Modified Date: 12/25/2018 
+* Last Modified Date: 12/26/2018 
 */
 
 public class FindDoctorController {
@@ -12,6 +12,8 @@ public class FindDoctorController {
     public List<Contact> doctorsToShow {get;set;}
     public List<TimeWrapper> availableTimes {get;set;}
     public List<Appointment__c> bookedAppointments {get;set;}
+    public Account familyAccount {get;set;}
+    public List<Contact> dependents {get;set;}
     public Appointment__c appointmentToSave {get;set;}
 
     //global picklists
@@ -31,6 +33,7 @@ public class FindDoctorController {
     //appointment save variables
     public String appointmentType {get;set;}
     public ID currentCustomerID {get;set;}
+    public ID selectedDependentID {get;set;}
     public String selectedStartTime {get;set;}
     
     //display booleans
@@ -38,9 +41,9 @@ public class FindDoctorController {
     public Boolean displayDoctorTable {get;set;}
     public Boolean displayAppointmentTable {get;set;}
     public Boolean displayAppointmentInfo {get;set;}
+    public Boolean displayConfirmation {get;set;}
     public Boolean showNext {get;set;}
     public Boolean showPrev {get;set;}
-    
     
     {
         selectedDoctor = new Contact();
@@ -76,13 +79,17 @@ public class FindDoctorController {
         displayAppointmentTable = false;
         displayDoctorTable = false;
         displayAppointmentInfo = false;
+        displayConfirmation = false;
         
         //get related customer object from context user 
         ID userID = userInfo.getUserId();
         currentCustomerID = [SELECT Id, ContactID FROM User Where Id = :userID].contactID;
         if (currentCustomerID != null) {
-            currentCustomer = [SELECT Id, Name, MailingLatitude, MailingLongitude FROM Contact WHERE Id = :currentCustomerID];
+            currentCustomer = [SELECT Id, Name, MailingLatitude, MailingLongitude, Social_Security_Number__c FROM Contact WHERE Id = :currentCustomerID];
         }
+        system.debug(currentCustomerID);
+        familyAccount = [SELECT Id FROM Account WHERE Primary_Social_Security_Number__c = :currentCustomer.Social_Security_Number__c];
+        dependents = [SELECT Id, Name, AccountID FROM Contact WHERE AccountID = :familyAccount.Id ];
     }
     
     //set list of doctors based on filter criteria
@@ -137,8 +144,8 @@ public class FindDoctorController {
         displayCriteria = false;
         displayDoctorTable = false;
         displayAppointmentTable = true;
-        
-        DateTime selectedDateTime = selectedDate;
+       
+        DateTime selectedDateTime = DateTime.newInstance(selectedDate.year(), selectedDate.month(), selectedDate.day());
         
         selectedDoctor = [SELECT Id, Name, Work_Hours__c, Workdays__c, Appointment_Length_Minutes__c
                           FROM Contact WHERE Id =:selectedDoctorID];
@@ -155,14 +162,15 @@ public class FindDoctorController {
         
         List<String> workHours = new List<String>();
         workHours.addAll(selectedDoctor.Work_Hours__c.split(';'));
+        system.debug('work hours: ' +workHours);
         
         List<String> workDays = new List<String>();
         workDays.addAll(selectedDoctor.Workdays__c.split(';'));
+        system.debug('work days: ' + workDays);
         
         //Build list of possible appointment times
         Boolean appointmentOverlap = false;
         DateTime potentialDateTime = selectedDateTime;
-        Integer i = 0;
         if(workDays.contains(selectedDateTime.format('EEEE'))) {
             while(potentialDateTime < selectedDateTime.addDays(1)) {
                 //if the doctor works at this hour
@@ -181,9 +189,14 @@ public class FindDoctorController {
                 //system.debug(potentialDateTime);
                 appointmentOverlap = false;
             }
+            system.debug('available times: ');
             system.debug(availableTimes);
         }
         
+    }
+    
+    public void selectDependent() {
+        appointmentToSave.Coverage_Member__c = selectedDependentID;
     }
     
     public void restartSearch() {
@@ -191,6 +204,7 @@ public class FindDoctorController {
         displayAppointmentTable = false;
         displayDoctorTable = false;
         displayAppointmentInfo = false;
+        displayConfirmation = false;
         doctorsToShow.clear();
         availableTimes.clear();
         bookedAppointments.clear();
@@ -200,7 +214,6 @@ public class FindDoctorController {
     public void selectAppointment() {
         displayAppointmentTable = false;
         displayAppointmentInfo = true;
-        appointmentToSave.Coverage_Member__c = currentCustomerID;
         appointmentToSave.Professional__c = selectedDoctorID;
         appointmentToSave.Start_Time__c = DateTime.parse(selectedStartTime);
         appointmentToSave.Reason_For_Visit__c = selectedSpecialty;
@@ -212,6 +225,11 @@ public class FindDoctorController {
     }
     
     public void saveAppointment() {
+        displayCriteria = false;
+        displayAppointmentTable = false;
+        displayDoctorTable = false;
+        displayAppointmentInfo = false;
+        displayConfirmation = true;
         appointmentToSave.Appointment_Type__c = appointmentType;
         insert appointmentToSave;
     }
