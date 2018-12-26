@@ -2,6 +2,6 @@ trigger ContactTrigger on Contact (after delete, after insert, after undelete, a
 {
     if(Trigger.isAfter && Trigger.isUpdate)
     {
-    	ContactTriggerHelper.ContactAfterUpdate(Trigger.OldMap, Trigger.NewMap);
+        ContactTriggerHelper.ContactAfterUpdate(Trigger.OldMap, Trigger.NewMap);
     }
 }

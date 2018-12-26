@@ -2,6 +2,6 @@ trigger UserTrigger on User (after delete, after insert, after undelete, after u
 {
     if(Trigger.isAfter && Trigger.isInsert)
     {
-    	UserTriggerHelper.UserAfterInsert(Trigger.New);
+        UserTriggerHelper.UserAfterInsert(Trigger.New);
     }
 }

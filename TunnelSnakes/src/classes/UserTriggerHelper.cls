@@ -38,7 +38,6 @@ public without sharing class UserTriggerHelper
 				userContactIdList.add(curUser.contactId);
 				userMap.put(curUser.contactId, curUser);
 			}
-			
 		}
 		
 		

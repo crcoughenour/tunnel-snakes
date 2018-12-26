@@ -34,26 +34,30 @@ public without sharing class ContactTriggerHelper
 		//build the junction objects to put the user's into the groups
 		for(Id curID : newConMap.keySet())
 		{
-			//since it is an update I don't think this is needed?
-			if(oldConMap.containsKey(curID) && newConMap.containsKey(curID))
+			//only work if the contact has a user account
+			if(userMap.containsKey(curID))
 			{
-				//only run this if the afflictions have been updated
-				if(oldConMap.get(curID).Affliction__c != newConMap.get(curID).Affliction__c)
+				//since it is an update I don't think this is needed?
+				if(oldConMap.containsKey(curID) && newConMap.containsKey(curID))
 				{
-					//get a set of the old afflictions to test against to know which of the afflictions are new
-					Set<String> oldAffSet = new Set<String>(oldConMap.get(curID).Affliction__c.split(';'));
-					
-					//get the list of the new afflictions
-					List<String> newAffList = newConMap.get(curID).Affliction__c.split(';');
-					
-					//check on all the new afflictions
-					for(String curAff : newAffList)
+					//only run this if the afflictions have been updated
+					if(oldConMap.get(curID).Affliction__c != newConMap.get(curID).Affliction__c)
 					{
-						//if the current affliction in the list is new, do this!
-						if(!oldAffSet.contains(curAff))
+						//get a set of the old afflictions to test against to know which of the afflictions are new
+						Set<String> oldAffSet = new Set<String>(oldConMap.get(curID).Affliction__c.split(';'));
+						
+						//get the list of the new afflictions
+						List<String> newAffList = newConMap.get(curID).Affliction__c.split(';');
+						
+						//check on all the new afflictions
+						for(String curAff : newAffList)
 						{
-							//add the new object to the list that will be inserted
-							collMemberList.add(new CollaborationGroupMember(CollaborationGroupId = groupMap.get(curAff), MemberId = userMap.get(curID).Id));
+							//if the current affliction in the list is new, do this!
+							if(!oldAffSet.contains(curAff))
+							{
+								//add the new object to the list that will be inserted
+								collMemberList.add(new CollaborationGroupMember(CollaborationGroupId = groupMap.get(curAff), MemberId = userMap.get(curID).Id));
+							}
 						}
 					}
 				}
