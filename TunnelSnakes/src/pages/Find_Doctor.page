@@ -7,9 +7,13 @@
     <apex:form >
         <apex:sectionHeader title="Find a doctor" />
         <apex:pageBlock rendered="{!displayCriteria}">
-        	<apex:selectList id = "chooseMember" value = "{!selectedDependent}" multiselect = "False" size = "3">
-        		<apex:selectOptions value = "{!dependents.name}"/>
-        	</apex:selectList>
+        	<apex:pageBlockTable value = "{!dependents}" var = "dep">
+        		<apex:column value = "{!dep.name}"/>
+        		<apex:column headervalue = "Select this coverage member?"/>
+        			<apex:commandLink value = "Select" action = "{!selectDependent}">
+        				<apex:param name = "selectedMember" value = "{!dep.id}" assignTo = "{!selectedDependentID}"/>
+        			</apex:commandLink>
+        		</apex:pageBlockTable>
         	<!--Choose Sex picklist-->
             <apex:pageBlockSection id="getMaxDistance" title="What is the furthest you are willing to travel (in miles)?">
                 <apex:inputText value="{!maxDistance}"/>
