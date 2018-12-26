@@ -6,7 +6,7 @@ public without sharing class UserTriggerHelper
 		Map<id, User> userMap = new Map<Id, User>();
 		
 		//get the record type id of coverage member
-		Id covMembId = [SELECT id FROM RecordType where Name ='Coverage_Member' LIMIT 1].Id;
+		Id covMembId = Schema.SObjectType.Contact.getRecordTypeInfosByName().get('Coverage Member').getRecordTypeId();
 		
 		//get a list of all the groups we will be using
 		List<CollaborationGroup> groupList = [SELECT Id, Name FROM CollaborationGroup];
@@ -48,6 +48,7 @@ public without sharing class UserTriggerHelper
 		for(Contact curCont : conList)
 		{
 			//only use contacts that are of the type we want(Coverage Member)
+			//System.debug(covMembId + ' == ' + curCont.RecordTypeId);
 			if(covMembId == curCont.RecordTypeId)
 			{
 				//get a list of all the groups they need to be added to
@@ -63,6 +64,7 @@ public without sharing class UserTriggerHelper
 		
 		try
 		{
+            //System.debug(collMemberList);
 			insert collMemberList;
 		}
 		catch(DMLException e)
