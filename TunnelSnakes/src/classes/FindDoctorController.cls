@@ -234,6 +234,7 @@ public class FindDoctorController {
         mail.setToAddresses(new String[] {currentCustomer.email});
         mail.setSubject('Appointment Confirmed');
         mail.setTemplateId(blankTemplate.id);
+        mail.setPlainBodyText(selectedDependent.Name + '\'s appointment with ' + selectedDoctor.name + ' on ' +  selectedStartTime + ' has been confirmed. You will be informed immediately of any changes to the status of the appointment');
         emailList.add(mail);
         Messaging.sendEmail(emailList);
     }
