@@ -1,7 +1,7 @@
 /* Developer: Cody Coughenour
 * Purpose: Handles requests from Visualforce Page for searching
 * for a doctor with whom to schedule an appointment.
-* Last Modified Date: 12/24/2018 
+* Last Modified Date: 12/26/2018 
 */
 
 public class FindDoctorController {
@@ -12,10 +12,11 @@ public class FindDoctorController {
     public List<Contact> doctorsToShow {get;set;}
     public List<TimeWrapper> availableTimes {get;set;}
     public List<Appointment__c> bookedAppointments {get;set;}
+    public Account familyAccount {get;set;}
+    public List<Contact> dependents {get;set;}
     public Appointment__c appointmentToSave {get;set;}
     public EmailTemplate blankTemplate {get;set;}
-    
-    
+
     //global picklists
     public List<SelectOption> specOptions {get;set;}
     public List<SelectOption> langOptions {get;set;}
@@ -33,6 +34,8 @@ public class FindDoctorController {
     //appointment save variables
     public String appointmentType {get;set;}
     public ID currentCustomerID {get;set;}
+    public Contact selectedDependent {get;set;}
+    public ID selectedDependentID {get;set;}
     public String selectedStartTime {get;set;}
     
     //display booleans
@@ -43,7 +46,6 @@ public class FindDoctorController {
     public Boolean displayConfirmation {get;set;}
     public Boolean showNext {get;set;}
     public Boolean showPrev {get;set;}
-    
     
     {
         selectedDoctor = new Contact();
@@ -80,13 +82,17 @@ public class FindDoctorController {
         displayAppointmentTable = false;
         displayDoctorTable = false;
         displayAppointmentInfo = false;
+        displayConfirmation = false;
         
         //get related customer object from context user 
         ID userID = userInfo.getUserId();
         currentCustomerID = [SELECT Id, ContactID FROM User Where Id = :userID].contactID;
         if (currentCustomerID != null) {
-            currentCustomer = [SELECT Id, Name, email, MailingLatitude, MailingLongitude FROM Contact WHERE Id = :currentCustomerID];
+            currentCustomer = [SELECT Id, Name, MailingLatitude, MailingLongitude, Social_Security_Number__c FROM Contact WHERE Id = :currentCustomerID];
         }
+        system.debug(currentCustomerID);
+        familyAccount = [SELECT Id FROM Account WHERE Primary_Social_Security_Number__c = :currentCustomer.Social_Security_Number__c];
+        dependents = [SELECT Id, Name, AccountID FROM Contact WHERE AccountID = :familyAccount.Id ];
     }
     
     //set list of doctors based on filter criteria
@@ -192,11 +198,17 @@ public class FindDoctorController {
         
     }
     
+    public void selectDependent() {
+        appointmentToSave.Coverage_Member__c = selectedDependentID;
+		selectedDependent = [SELECT Id, Name FROM Contact WHERE Id = :selectedDependentID LIMIT 1];
+    }
+    
     public void restartSearch() {
         displayCriteria = true;
         displayAppointmentTable = false;
         displayDoctorTable = false;
         displayAppointmentInfo = false;
+        displayConfirmation = false;
         doctorsToShow.clear();
         availableTimes.clear();
         bookedAppointments.clear();
@@ -206,7 +218,6 @@ public class FindDoctorController {
     public void selectAppointment() {
         displayAppointmentTable = false;
         displayAppointmentInfo = true;
-        appointmentToSave.Coverage_Member__c = currentCustomerID;
         appointmentToSave.Professional__c = selectedDoctorID;
         appointmentToSave.Start_Time__c = DateTime.parse(selectedStartTime);
         appointmentToSave.Reason_For_Visit__c = selectedSpecialty;
