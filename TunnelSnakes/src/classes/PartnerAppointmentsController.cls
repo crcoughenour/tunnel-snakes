@@ -5,21 +5,22 @@
  *  to manage/cancel all upcoming appointments
  */
 
-public with sharing class PartnerAppointmentsController 
+public without sharing class PartnerAppointmentsController 
 {
     private List<Appointment__c> appointmentList;
     //public Map<id, Contact> covMemberMap {get; set;}
     //public List<Boolean> appBoolList {get; set;}
     private List<Contact> doctorList;
-    private Map<Id, String> doctorMap;
+    //private Map<Id, String> doctorMap;
     public List<AppointmentWrapper> appointmentWrapperList {get; private set;}
+    public ID contactID {get; set;}
     private DateTime currentDateTime;
     
     
     public PartnerAppointmentsController()
     {
     	currentDateTime = System.now();
-        doctorMap = new Map<Id, String>();
+        //doctorMap = new Map<Id, String>();
 	    //appBoolList = new List<Boolean>();
 	    appointmentWrapperList = new List<AppointmentWrapper>();
         
@@ -31,22 +32,27 @@ public with sharing class PartnerAppointmentsController
 	    	
     		//get all doctors that the current user has access to
     			//necessary incase the user is a nurse who is in charge of multiple doctors scheduling
-	    	doctorList = [SELECT Id, Name FROM Contact];
+	    	//doctorList = [SELECT Id, Name FROM Contact];
 	    	
 	    	
 	    	//fill a map with keys = doctor's id, values = doctor's name
-	    	for(Contact con : doctorList)
-	    	{
+	    	//for(Contact con : doctorList)
+	    	//{
 	    		//tempIdSet.add(con.Id);
-	    		doctorMap.put(con.Id, con.Name);
-	    	}
+	    	//	doctorMap.put(con.Id, con.Name);
+	    	//}
+	    	ID userID = userinfo.getUserId();
+	    	contactID = [SELECT ContactId FROM User WHERE id = :userID LIMIT 1].ContactId;
+	    	//contactID = '0031U000004oLzoQAE';
+	    	//Id contactID = [SELECT id FROM ]
 	    	
 	    	//get all appointments that have not occured yet, and that are for the doctors previously gotten
 	    	appointmentList = [SELECT Id, Appointment_Length__c, Appointment_Type__c, 
 	    					   Coverage_Member__c, Professional__c, Reason_For_Visit__c, 
 	    					   Start_Time__c, Description__c, Patient_Name__c, Doctor_Name__c FROM Appointment__c 
-	    					   WHERE ((Start_Time__c > :currentDateTime) and Professional__c IN :doctorMap.keySet())
+	    					   WHERE ((Start_Time__c > :currentDateTime) and (Professional__c = :contactID))
 	    					   ORDER BY Start_Time__c];
+	    					   
 	    					   
 		    //make the list of boolean values the same size as appointmentList and populate it with all falses
     		for(Integer i = 0; i < appointmentList.size(); i++)
