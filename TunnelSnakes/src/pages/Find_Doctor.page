@@ -16,7 +16,7 @@
         		</apex:column>
         	</apex:pageBlockTable>
         	<apex:outputLabel value = "Selected account member: ">
-        		<apex:outputText value = "{!appointmentToSave.coverage_member__c.name}"/>
+        		<apex:outputText value = "{!selectedDependent.name}"/>
         	</apex:outputLabel>
         	<!--Choose Sex picklist-->
             <apex:pageBlockSection id="getMaxDistance" title="What is the furthest you are willing to travel (in miles)?">
@@ -112,7 +112,7 @@
             </apex:pageBlockButtons>
         </apex:pageBlock>
         <apex:pageBlock rendered="{!displayConfirmation}">
-            <apex:outputText value="{!appointmentToSave.coverage_member__c.name} appointment with {!selectedDoctor.name} on {!selectedStartTime} has been requested">
+            <apex:outputText value="{!selectedDependent.name} appointment with {!selectedDoctor.name} on {!selectedStartTime} has been requested">
             </apex:outputText>
         </apex:pageBlock>
     </apex:form>
