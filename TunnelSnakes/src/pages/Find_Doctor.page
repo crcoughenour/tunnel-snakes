@@ -4,18 +4,13 @@
 	-->   
 
 <apex:page controller="FindDoctorController" sidebar="False" title="Find Doctor" showHeader="False" docType="HTML - 5.0">
-	<script>
-		function changeColor(id){
-			document.getElementbyId(id).setAttribute(styleClass, #f60);
-		}
-	</script>
     <apex:form >
         <apex:sectionHeader title="Find a doctor" />
         <apex:pageBlock rendered="{!displayCriteria}">
         	<apex:pageBlockTable value = "{!dependents}" var = "dep">
         		<apex:column value = "{!dep.name}"/>
-        		<apex:column headervalue = "Select this coverage member?" id = "theRow">
-        			<apex:commandLink value = "Select" action = "{!selectDependent}" onComplete = "changeColor(the)">
+        		<apex:column headervalue = "Select this coverage member?">
+        			<apex:commandLink value = "Select" action = "{!selectDependent}">
         				<apex:param name = "selectedMember" value = "{!dep.id}" assignTo = "{!selectedDependentID}"/>
         			</apex:commandLink>
         		</apex:column>
