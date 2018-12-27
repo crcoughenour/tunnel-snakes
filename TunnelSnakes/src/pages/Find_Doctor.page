@@ -4,17 +4,25 @@
 	-->   
 
 <apex:page controller="FindDoctorController" sidebar="False" title="Find Doctor" showHeader="False" docType="HTML - 5.0">
+	<script>
+		function changeColor(id){
+			document.getElementbyId(id).setAttribute(styleClass, #f60);
+		}
+	</script>
     <apex:form >
         <apex:sectionHeader title="Find a doctor" />
         <apex:pageBlock rendered="{!displayCriteria}">
         	<apex:pageBlockTable value = "{!dependents}" var = "dep">
         		<apex:column value = "{!dep.name}"/>
-        		<apex:column headervalue = "Select this coverage member?">
-        			<apex:commandLink value = "Select" action = "{!selectDependent}">
+        		<apex:column headervalue = "Select this coverage member?" id = "theRow">
+        			<apex:commandLink value = "Select" action = "{!selectDependent}" onComplete = "changeColor(the)">
         				<apex:param name = "selectedMember" value = "{!dep.id}" assignTo = "{!selectedDependentID}"/>
         			</apex:commandLink>
         		</apex:column>
         	</apex:pageBlockTable>
+        	<apex:outputLabel value = "Selected account member: ">
+        		<apex:outputText value = "{!appointmentToSave.coverage_member__c.name}"/>
+        	</apex:outputLabel>
         	<!--Choose Sex picklist-->
             <apex:pageBlockSection id="getMaxDistance" title="What is the furthest you are willing to travel (in miles)?">
                 <apex:inputText value="{!maxDistance}"/>
@@ -109,7 +117,7 @@
             </apex:pageBlockButtons>
         </apex:pageBlock>
         <apex:pageBlock rendered="{!displayConfirmation}">
-            <apex:outputText value="Your appointment with {!selectedDoctor.name} on {!selectedStartTime} has been requested">
+            <apex:outputText value="{!appointmentToSave.coverage_member__c.name} appointment with {!selectedDoctor.name} on {!selectedStartTime} has been requested">
             </apex:outputText>
         </apex:pageBlock>
     </apex:form>
