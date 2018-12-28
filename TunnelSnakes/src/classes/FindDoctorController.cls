@@ -1,7 +1,7 @@
 /* Developer: Cody Coughenour
 * Purpose: Handles requests from Visualforce Page for searching
 * for a doctor with whom to schedule an appointment.
-* Last Modified Date: 12/26/2018 
+* Last Modified Date: 12/27/2018 
 */
 
 public class FindDoctorController {
@@ -15,6 +15,7 @@ public class FindDoctorController {
     public Account familyAccount {get;set;}
     public List<Contact> dependents {get;set;}
     public Appointment__c appointmentToSave {get;set;}
+    public EmailTemplate blankTemplate {get;set;}
 
     //global picklists
     public List<SelectOption> specOptions {get;set;}
@@ -33,6 +34,7 @@ public class FindDoctorController {
     //appointment save variables
     public String appointmentType {get;set;}
     public ID currentCustomerID {get;set;}
+    public Contact selectedDependent {get;set;}
     public ID selectedDependentID {get;set;}
     public String selectedStartTime {get;set;}
     
@@ -51,6 +53,7 @@ public class FindDoctorController {
         availableTimes = new List<TimeWrapper>();
         bookedAppointments = new List<Appointment__c>(); 
         appointmentToSave = new Appointment__c();
+        blankTemplate = new EmailTemplate();
         
         //get picklist values
         Schema.DescribeFieldResult fieldResult = Contact.Languages__c.getDescribe();
@@ -85,7 +88,7 @@ public class FindDoctorController {
         ID userID = userInfo.getUserId();
         currentCustomerID = [SELECT Id, ContactID FROM User Where Id = :userID].contactID;
         if (currentCustomerID != null) {
-            currentCustomer = [SELECT Id, Name, MailingLatitude, MailingLongitude, Social_Security_Number__c FROM Contact WHERE Id = :currentCustomerID];
+            currentCustomer = [SELECT Id, Name, MailingLatitude, MailingLongitude, Social_Security_Number__c, Email FROM Contact WHERE Id = :currentCustomerID];
         }
         system.debug(currentCustomerID);
         familyAccount = [SELECT Id FROM Account WHERE Primary_Social_Security_Number__c = :currentCustomer.Social_Security_Number__c];
@@ -127,6 +130,11 @@ public class FindDoctorController {
             
         }
         NumberOfFilters++; 
+        
+        if (maxDistance == null) {
+        	maxDistance = '30'; //default distance search is 30 miles 
+        }
+        
         queryStringWhere += ' DISTANCE(Location__c, GEOLOCATION('
             + String.valueOf(currentCustomer.MailingLatitude)+','+String.valueOf(currentCustomer.MailingLongitude) +
             '), \'mi\') < ' + maxDistance;
@@ -197,6 +205,7 @@ public class FindDoctorController {
     
     public void selectDependent() {
         appointmentToSave.Coverage_Member__c = selectedDependentID;
+        selectedDependent = [SELECT Id, Name FROM Contact WHERE Id = :selectedDependentID LIMIT 1];
     }
     
     public void restartSearch() {
@@ -232,6 +241,18 @@ public class FindDoctorController {
         displayConfirmation = true;
         appointmentToSave.Appointment_Type__c = appointmentType;
         insert appointmentToSave;
+        
+        //Query Template ID
+        blankTemplate = [SELECT id FROM EmailTemplate WHERE name = 'Blank With Letterhead'];
+        //Send Appointment to primary confirming appointment
+        List<Messaging.SingleEmailMessage> emailList = new List<Messaging.SingleEmailMessage>();
+        Messaging.singleEmailMessage mail = new Messaging.SingleEmailMessage();
+        mail.setToAddresses(new String[] {currentCustomer.email});
+        mail.setSubject('Appointment Confirmed');
+        mail.setTemplateId(blankTemplate.id);
+        mail.setPlainTextBody(selectedDependent.Name + '\'s appointment with ' + selectedDoctor.name + ' on ' +  selectedStartTime + ' has been confirmed. You will be informed immediately of any changes to the status of the appointment');
+        emailList.add(mail);
+        Messaging.sendEmail(emailList);
     }
     
     public class TimeWrapper {
