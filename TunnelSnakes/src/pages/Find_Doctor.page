@@ -1,59 +1,68 @@
 <!-- Developer: Dyllon Carlson
-	Purpose: Page for a customer to create an appointment w/ a network doctor
-	Last Modified: 12/26/2018      
-	-->   
+    Purpose: Page for a customer to create an appointment w/ a network doctor
+    Last Modified: 12/27/2018      
+    -->   
 
 <apex:page controller="FindDoctorController" sidebar="False" title="Find Doctor" showHeader="False" docType="HTML - 5.0">
+    <apex:stylesheet value="{!$Resource.SH_Generic_css}"/>
     <apex:form >
         <apex:sectionHeader title="Find a doctor" />
         <apex:pageBlock rendered="{!displayCriteria}">
-        	<apex:pageBlockTable value = "{!dependents}" var = "dep">
-        		<apex:column value = "{!dep.name}"/>
-        		<apex:column headervalue = "Select this coverage member?">
-        			<apex:commandLink value = "Select" action = "{!selectDependent}">
-        				<apex:param name = "selectedMember" value = "{!dep.id}" assignTo = "{!selectedDependentID}"/>
-        			</apex:commandLink>
-        		</apex:column>
-        	</apex:pageBlockTable>
-        	<apex:outputLabel value = "Selected account member: ">
-        		<apex:outputText value = "{!selectedDependent.name}"/>
-        	</apex:outputLabel>
-        	<!--Choose Sex picklist-->
-            <apex:pageBlockSection id="getMaxDistance" title="What is the furthest you are willing to travel (in miles)?">
-                <apex:inputText value="{!maxDistance}"/>
-            </apex:pageBlockSection>
-            <apex:pageBlockSection title="Select a preferred sex" collapsible="False">
-                <apex:selectList id="chooseSex" value="{!selectedSex}" multiselect="false" size="1">
-                    <apex:selectOption itemValue="No Preference" itemLabel="No Preference"/>
-                    <apex:selectOption itemValue="Male" itemLabel="Male"/>
-                    <apex:selectOption itemValue="Female" itemLabel="Female"/>
-                </apex:selectList>
-            </apex:pageBlockSection>
-            <!--Choose language picklist-->
-            <apex:pageBlockSection title="Select a preffered language" collapsible="False">
-                <apex:selectList id="chooseLanguage" value="{!selectedLanguage}" multiselect="false" size="1">
-                    <apex:selectOptions value = "{!langOptions}"/>
-                </apex:selectList>
-            </apex:pageBlockSection>
-            <!--Choose specialty picklist-->
-            <apex:PageBlockSection title="Select a preferred specialty" collapsible="False">
-                <apex:selectList id="chooseSpecialty" value="{!selectedSpecialty}" multiselect="false" size="1">
-                    <apex:selectOptions value = "{!specOptions}"/>
-                </apex:selectList>
-            </apex:PageBlockSection>
-            <!--Choose Date option -->
-            <apex:pageBlockSection title="Select a date" collapsible="False">
-                <apex:input value="{!selectedDate}" type="date"/>
+            <apex:pageBlockTable value="{!dependents}" var="dep" styleClass="partnerAppTable">
+                <apex:column value="{!dep.name}"/>
+                <apex:column headervalue="Select this coverage member?">
+                    <apex:commandLink value="Select" action="{!selectDependent}">
+                        <apex:param name="selectedMember" value="{!dep.id}" assignTo="{!selectedDependentID}"/>
+                    </apex:commandLink>
+                </apex:column>
+            </apex:pageBlockTable>
+            <apex:outputLabel value="Selected account member: ">
+                <apex:outputText value="{!selectedDependent.name}"/>
+            </apex:outputLabel>
+            <!--Find the distance to search within-->
+            <apex:pageBlockSection id="getMaxDistance" columns = "2">
+                <apex:pageBlockSectionItem>
+                    <apex:outputLabel value = "What is the furthest distance you are willing to travel (in miles)?"/>
+                    <apex:inputText value = "{!maxDistance}"/>
+                </apex:pageBlockSectionItem>
+                <!--Choose sex picklist-->
+                <apex:pageBlockSectionItem>
+                    <apex:outputLabel value = "Select a preferred doctor sex"/>
+                	<apex:selectList id="chooseSex" value="{!selectedSex}" multiselect="false" size="1">
+                        <apex:selectOption itemValue="No Preference" itemLabel="No Preference"/>
+                        <apex:selectOption itemValue="Male" itemLabel="Male"/>
+                        <apex:selectOption itemValue="Female" itemLabel="Female"/>
+                	</apex:selectList>
+                </apex:pageBlockSectionItem>
+                <!--Choose language picklist-->
+                <apex:pageBlockSectionItem>
+                    <apex:outputLabel value = "Select a preferred doctor language"/>
+                	<apex:selectList id="chooseLanguage" value="{!selectedLanguage}" multiselect="false" size="1">
+                    	<apex:selectOptions value="{!langOptions}"/>
+                	</apex:selectList>
+                </apex:pageBlockSectionItem>
+            	<!--Choose specialty picklist-->
+                <apex:pageBlockSectionItem>
+                    <apex:outputLabel value = "Select a preferred specialty"/>
+                    <apex:selectList id="chooseSpecialty" value="{!selectedSpecialty}" multiselect="false" size="1">
+                        <apex:selectOptions value="{!specOptions}"/>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                <!--Choose Date option -->
+                <apex:pageBlockSectionItem>
+                    <apex:outputLabel value = "Select a date"/>
+                    <apex:input value="{!selectedDate}" type="date"/>
+                </apex:pageBlockSectionItem>
             </apex:pageBlockSection>
             <!--Button that calls function to populate a table of doctors that meet the selected criteria-->
-            <apex:pageBlockButtons location="bottom">
-                <apex:commandButton action="{!searchDoctors}" value="Find Doctors"/>
-            </apex:pageBlockButtons>
+            <div align="center" draggable="false">
+                    <apex:commandButton action="{!searchDoctors}" value="Find Doctors" styleClass="partnerAppSubmitButton"/>
+            </div>
         </apex:pageBlock>
-        <apex:pageBlock rendered="{!displayDoctorTable}" id="chooseDoctor">
-            <apex:pageBlockSection title="Choose a doctor" collapsible="False">
+        <apex:pageBlock rendered="{!displayDoctorTable}" id="chooseDoctor" >
+            <apex:pageBlockSection title="Choose a doctor" collapsible="False" columns="1">
             <!--Table that contains the list of doctors that meet the selected criteria-->
-                <apex:pageBlockTable id="doctorTable" value="{!doctorsToShow}" var="docs">
+                <apex:pageBlockTable id="doctorTable" value="{!doctorsToShow}" var="docs" styleClass="partnerAppTable">
                     <apex:column value="{!docs.name}"/>
                     <apex:column value="{!docs.Languages__c}"/>
                     <apex:column value="{!docs.Sex__c}"/>
@@ -69,7 +78,7 @@
         <apex:pageBlock rendered="{!displayAppointmentTable}">
             <apex:pageBlockSection title="Select Appointment" collapsible="False">
                 <!--Displays the chosen doctor's available appointments-->
-                <apex:pageBlockTable id="appointmentTable" value="{!availableTimes}" var="times">
+                <apex:pageBlockTable id="appointmentTable" value="{!availableTimes}" var="times" styleClass="partnerAppTable">
                     <apex:column value="{!times.dt}"/>
                     <apex:column headerValue="Select this appointment?" >
                         <apex:commandLink value="Select" action="{!selectAppointment}" >
@@ -100,16 +109,16 @@
                 </apex:outputLabel>
             </apex:pageBlockSection>
             <!--Buttons that allow a user either save the appointment or go back to appointment time table-->   
-            <apex:pageBlockButtons location="bottom" >
-                <apex:commandButton action="{!closeAppointment}" value="Close this appointment"/>
-                <apex:commandButton action="{!saveAppointment}" value="Request Appointment"/>
-            </apex:pageBlockButtons>
+            <div align="center" draggable="false">
+                <apex:commandButton action="{!closeAppointment}" value="Close this appointment" styleClass="partnerAppSubmitButton"/>
+                <apex:commandButton action="{!saveAppointment}" value="Request Appointment" styleClass="partnerAppSubmitButton"/>
+            </div>
         </apex:pageBlock>
         <apex:pageBlock >
         <!--Button that allows a user to restart their search-->
-            <apex:pageBlockButtons location="Bottom">
-                <apex:commandButton value="Restart Search" action="{!restartSearch}"/>
-            </apex:pageBlockButtons>
+            <div align="center" draggable="false">
+                <apex:commandButton value="Restart Search" action="{!restartSearch}" styleClass="partnerAppSubmitButton"/>
+            </div>
         </apex:pageBlock>
         <apex:pageBlock rendered="{!displayConfirmation}">
             <apex:outputText value="{!selectedDependent.name} appointment with {!selectedDoctor.name} on {!selectedStartTime} has been requested">
