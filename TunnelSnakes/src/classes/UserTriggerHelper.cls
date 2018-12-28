@@ -51,8 +51,16 @@ public without sharing class UserTriggerHelper
 			//System.debug(covMembId + ' == ' + curCont.RecordTypeId);
 			if(covMembId == curCont.RecordTypeId)
 			{
+				List<String> afflictionList;
 				//get a list of all the groups they need to be added to
-				List<String> afflictionList = curCont.Affliction__c.split(';');
+				if(curCont.Affliction__c != null)
+				{
+					afflictionList = curCont.Affliction__c.split(';');
+				}
+				else
+				{
+					afflictionList = new List<String>();
+				}
 				//add them to the list
 				for(String curAff : afflictionList)
 				{

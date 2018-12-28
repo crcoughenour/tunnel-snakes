@@ -1,0 +1,31 @@
+<!-- Partner Appointment Page to Accept/Reject -->
+<apex:page sidebar="false" showHeader="false" tabStyle="Contact"
+    controller="PartnerAppointmentsController">
+   <apex:stylesheet value="{!$Resource.SH_Generic_css}"/>
+    <apex:form id="theForm">
+        <apex:pageBlock title="Pending Appointments" id="appointments">
+            <apex:pageBlockSection columns="1" id="appointmentsSection">
+                <apex:pageBlockSectionItem id="appointmentsSectionItem">
+                    <apex:outputPanel >
+                        <apex:pageBlockTable value="{!appointmentWrapperList}" var="app" styleClass="partnerAppTable" id="appointmentsTable">
+                        	<apex:column id="appointmentsCheckbox">
+                                <apex:inputCheckbox value="{!app.setToDelete}" rendered="{!app.trueToRender}"/>
+                            </apex:column>
+                            <apex:column value="{!app.appointment.Doctor_Name__c}" id="appointmentsDoctorName"/>
+                            <apex:column value="{!app.appointment.Patient_Name__c}" id="appointmentsPatientName"/>
+                            <apex:column value="{!app.appointment.Appointment_Type__c}" id="appointmentsType"/>
+                            <apex:column value="{!app.appointment.Start_Time__c}" id="appointmentsStartTime"/>
+                            <apex:column value="{!app.appointment.Appointment_Length__c}" id="appointmentsLength"/>
+                            <apex:column value="{!app.appointment.Reason_For_Visit__c}" id="appointmentsReason"/>
+                            
+                        </apex:pageBlockTable>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <div align="center" draggable="false">
+                <apex:commandButton value="Delete Selected"
+                    action="{!deleteSelectedAppointments}" reRender="appointments" styleClass="partnerAppSubmitButton"/>
+            </div>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

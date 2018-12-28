@@ -58,7 +58,17 @@ public without sharing class PartnerAppointmentsController
     		for(Integer i = 0; i < appointmentList.size(); i++)
     		{
     			//appBoolList.add(false);
-    			appointmentWrapperList.add(new AppointmentWrapper(appointmentList[i], false));
+    			
+    			//determine if the appointment can be deleted, and add it to the wrapper list with the
+    			//appropriate value
+    			if(appointmentList[i].Start_Time__c > currentDateTime.addHours(24))
+    			{
+    				appointmentWrapperList.add(new AppointmentWrapper(appointmentList[i], false, true));
+    			}
+    			else
+    			{
+    				appointmentWrapperList.add(new AppointmentWrapper(appointmentList[i], false, false));
+    			}
     		}
     	}
     	catch(QueryException e)
@@ -139,13 +149,15 @@ public without sharing class PartnerAppointmentsController
     
     class AppointmentWrapper
     {
-    	public Appointment__c appointment {get; set;}
+    	public Appointment__c appointment {get; private set;}
     	public Boolean setToDelete {get; set;}
+    	public Boolean trueToRender {get; private set;}
     	
-    	public AppointmentWrapper(Appointment__c appointment, Boolean setToDelete)
+    	public AppointmentWrapper(Appointment__c appointment, Boolean setToDelete, Boolean trueToRender)
     	{
     		this.appointment = appointment;
     		this.setToDelete = setToDelete;
+    		this.trueToRender = trueToRender;
     	}
     }
 }
