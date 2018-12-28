@@ -131,7 +131,7 @@ public class FindDoctorController {
         }
         NumberOfFilters++; 
         
-        if (maxDistance == null) {
+        if (maxDistance == '') {
         	maxDistance = '30'; //default distance search is 30 miles 
         }
         
