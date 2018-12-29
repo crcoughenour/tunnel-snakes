@@ -109,7 +109,7 @@ h2.mainTitle
 	background-color: transparent !important;
 }
 
-.partnerAppTable tr td
+.partnerAppTable tr, .partnerAppTable td
 {
     border-bottom-width: 0px !important;
 }
@@ -146,7 +146,12 @@ h2.mainTitle
 	margin-right: auto !important;
 }
 
-.dependListTable th, td
+.dependListTable th, .dependListTable td
+{
+	width: 50% !important;
+}
+
+.stuCssClass th, .stuCssClass td
 {
 	width: 50% !important;
 }
@@ -167,12 +172,12 @@ h2.mainTitle
 	margin-right: auto !important;
 }
 
-.appInformation td, th
+.appInformation td, .appInformation th
 {
 	border-bottom: 0px !important;
 }
 
-.chooseDoctorTable td, th
+.chooseDoctorTable td, .chooseDoctorTable th
 {
 	width: 25% !important;
 }
@@ -189,14 +194,19 @@ h2.mainTitle
 {
 	text-align: left !important;
 	font-size: 1.3em !important;
-	width: 25% !important;
 }
 
 .appFinalInfo th
 {
 	text-align: right !important;
 	font-size: 1.2em !important;
+}
+
+.appFinalInfo td, .appFinalInfo th
+{
 	width: 25% !important;
+	padding-top: 20px !important;
+	padding-bottom: 10px !important;
 }
 
 

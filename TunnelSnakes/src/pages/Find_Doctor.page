@@ -15,21 +15,21 @@
                     </apex:commandLink>
                 </apex:column>
             </apex:pageBlockTable>
-            <div id="selectedMember">
+            <div id="selectedMember"> 
             <apex:outputLabel value="Selected account member: ">
                 <apex:outputText value="{!selectedDependent.name}"/>
             </apex:outputLabel>
             </div>
             <!--Find the distance to search within-->
             <div class="appInformation">
-            <apex:pageBlockSection id="getMaxDistance" columns = "2">
-                <apex:pageBlockSectionItem>
-                    <apex:outputLabel value = "What is the furthest distance you are willing to travel (in miles)?"/>
-                    <apex:inputText value = "{!maxDistance}"/>
+            <apex:pageBlockSection id="getMaxDistance" columns="2">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="What is the furthest distance you are willing to travel (in miles)?"/>
+                    <apex:inputText value="{!maxDistance}"/>
                 </apex:pageBlockSectionItem>
                 <!--Choose sex picklist-->
-                <apex:pageBlockSectionItem>
-                    <apex:outputLabel value = "Select a preferred doctor sex"/>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Select a preferred doctor sex"/>
                 	<apex:selectList id="chooseSex" value="{!selectedSex}" multiselect="false" size="1">
                         <apex:selectOption itemValue="No Preference" itemLabel="No Preference"/>
                         <apex:selectOption itemValue="Male" itemLabel="Male"/>
@@ -37,22 +37,31 @@
                 	</apex:selectList>
                 </apex:pageBlockSectionItem>
                 <!--Choose language picklist-->
-                <apex:pageBlockSectionItem>
-                    <apex:outputLabel value = "Select a preferred doctor language"/>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Select a preferred doctor language"/>
                 	<apex:selectList id="chooseLanguage" value="{!selectedLanguage}" multiselect="false" size="1">
                     	<apex:selectOptions value="{!langOptions}"/>
                 	</apex:selectList>
                 </apex:pageBlockSectionItem>
             	<!--Choose specialty picklist-->
-                <apex:pageBlockSectionItem>
-                    <apex:outputLabel value = "Select a preferred specialty"/>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Select a preferred specialty"/>
                     <apex:selectList id="chooseSpecialty" value="{!selectedSpecialty}" multiselect="false" size="1">
                         <apex:selectOptions value="{!specOptions}"/>
                     </apex:selectList>
                 </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                	<apex:outputLabel value="Select the appointment type"/>
+	                <apex:selectList id="chooseType" value="{!appointmentType}" multiselect="false" size="1">
+	                    <apex:selectOption itemValue="Check-up" itemLabel="Check-up"/>
+	                    <apex:selectOption itemValue="Consulation" itemLabel="Consulation"/>
+	                    <apex:selectOption itemValue="Lab test" itemLabel="Lab test"/>
+	                    <apex:selectOption itemValue="Treatment" itemLabel="Treatment"/>
+	                </apex:selectList>
+                </apex:pageBlockSectionItem>
                 <!--Choose Date option -->
-                <apex:pageBlockSectionItem>
-                    <apex:outputLabel value = "Select a date"/>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Select a date"/>
                     <apex:input value="{!selectedDate}" type="date"/>
                 </apex:pageBlockSectionItem>
             </apex:pageBlockSection>
@@ -81,7 +90,7 @@
         <apex:pageBlock rendered="{!displayAppointmentTable}">
             <apex:pageBlockSection collapsible="False" columns="1">
                 <!--Displays the chosen doctor's available appointments-->
-                <apex:pageBlockTable id="appointmentTable" value="{!availableTimes}" var="times" styleClass="partnerAppTable">
+                <apex:pageBlockTable id="appointmentTable" value="{!availableTimes}" var="times" styleClass="partnerAppTable appInformation stuCssClass">
                     <apex:column value="{!times.dt}" headerValue="Appointment Time"/>
                     <apex:column headerValue="Select This Appointment?" >
                         <apex:commandLink value="Select" action="{!selectAppointment}" >
@@ -90,31 +99,22 @@
                         </apex:commandLink>
                     </apex:column>
                 </apex:pageBlockTable>                         
-            </apex:pageBlockSection>
+            </apex:pageBlockSection> 
         </apex:pageBlock>
         <apex:pageBlock rendered="{!displayAppointmentInfo}">
-            <apex:pageBlockSection title="Select the Appointment Type" collapsible="false">
-                <!--Allows the user to select the type of appointment they are scheduling-->
-                <apex:selectList id="chooseType" value="{!appointmentType}" multiselect="false" size="1">
-                    <apex:selectOption itemValue="Check-up" itemLabel="Check-up"/>
-                    <apex:selectOption itemValue="Consulation" itemLabel="Consulation"/>
-                    <apex:selectOption itemValue="Lab test" itemLabel="Lab test"/>
-                    <apex:selectOption itemValue="Treatment" itemLabel="Treatment"/>
-                </apex:selectList>
-            </apex:pageBlockSection>
             <div class="appFinalInfo">
-            <apex:pageBlockSection title="Appointment Information" collapsible="false">
-                <!--Displays appointment info (scheduled doctor and appointment time)-->
-                <apex:pageBlockSectionItem>
-                <apex:outputLabel value="Doctor Name "/>
-                    <apex:outputText value="{!selectedDoctor.name}"/>
-                    </apex:pageBlockSectionItem>
-                    <apex:pageBlockSectionItem>
-                <apex:outputLabel value="Appointment Date and Time: "/>
-                    <apex:outputText value="{!selectedStartTime}"/>      
-                    </apex:pageBlockSectionItem>  
-                
-            </apex:pageBlockSection>
+	            <apex:pageBlockSection title="Appointment Information" collapsible="false">
+	                <!--Displays appointment info (scheduled doctor and appointment time)-->
+	                <apex:pageBlockSectionItem >
+	                <apex:outputLabel value="Doctor Name: "/>
+	                    <apex:outputText value="{!selectedDoctor.name}"/>
+	                    </apex:pageBlockSectionItem>
+	                    <apex:pageBlockSectionItem >
+	                <apex:outputLabel value="Appointment Date and Time: "/>
+	                    <apex:outputText value="{!selectedStartTime}"/>      
+	                    </apex:pageBlockSectionItem>  
+	                
+	            </apex:pageBlockSection>
             </div>
             <!--Buttons that allow a user either save the appointment or go back to appointment time table-->   
             <div align="center" draggable="false">
